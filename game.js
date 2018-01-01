@@ -32,10 +32,13 @@
   const PreloaderGameState = new Phaser.State();
 
   PreloaderGameState.preload = function() {
+    game.load.image('startButton', 'assets/sprites/button-start-game.png');
     game.load.image('sky', 'assets/sprites/sky.png');
     game.load.image('master', 'assets/sprites/master.png');
     game.load.image('baddie', 'assets/sprites/space-baddie.png');
-    game.load.image('startButton', 'assets/sprites/button-start-game.png');
+    game.load.image('booksP', 'assets/sprites/booksP.png');
+    game.load.image('booksH', 'assets/sprites/booksH.png');
+    game.load.image('booksD', 'assets/sprites/booksD.png');
   };
 
   PreloaderGameState.create = function() {
@@ -71,12 +74,14 @@
   let aliens;
   let cursors;
   let score = 0;
+  let books;
+  const booksToSpawn = ['D', 'H', 'P'];
 
   GameSwarmState.create = function() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.add.sprite(0, 0, 'sky');
 
-    ScoreText = game.add.text(16, 24, 'Score: 0', { fontSize: '28px', fill: '#000' });
+    ScoreText = game.add.text(16, 24, 'Score: 0', {fontSize: '28px', fill: '#000'});
 
     player = game.add.sprite(32, 200, 'master');
     game.physics.arcade.enable(player);
@@ -86,7 +91,7 @@
     aliens = game.add.group();
     aliens.enableBody = true;
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 20; i++) {
       let s = aliens.create(game.world.randomX, game.world.randomY, 'baddie');
       s.name = 'alien' + s;
       s.body.collideWorldBounds = true;
@@ -95,6 +100,24 @@
     }
 
     cursors = game.input.keyboard.createCursorKeys();
+
+    books = game.add.group();
+    game.physics.arcade.enable(books);
+    books.enableBody = true;
+
+    const spawnBook = () => {
+      const name = booksToSpawn.pop();
+      let b = game.add.sprite(game.world.randomX, game.world.randomY, `books${name}`);
+      books.add(b);
+      b.name = name;
+      b.body.immovable = true;
+      b.body.collideWorldBounds = true;
+
+      let bounceTween = game.add.tween(b);
+      bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
+    };
+
+    game.time.events.repeat(Phaser.Timer.SECOND * 10, 3, spawnBook, this);
   };
 
   GameSwarmState.update = function() {
@@ -102,22 +125,26 @@
       score += 5;
       ScoreText.text = 'Score: ' + score;
     };
-
     const gameOverCheck = () => {
       if (!aliens.countLiving()) {
         game.state.start('GameOver', false, false);
       }
     };
-
-    const collisionHandler = (player, alien) => {
-      alien.kill();
-      updateScore();
-      gameOverCheck();
+    const alienCollisionHandler = (player, alien) => {
+      // alien.kill();
+      // updateScore();
+      // gameOverCheck();
     };
+    game.physics.arcade.collide(player, aliens, alienCollisionHandler, null, this);
 
-    if (game.physics.arcade.collide(player, aliens, collisionHandler, null, this)) {
-      // console.log('boom');
-    }
+    const switchMode = () => {
+
+    };
+    const booksCollisionHandler = (player, book) => {
+      book.kill();
+      switchMode();
+    };
+    game.physics.arcade.collide(player, books, booksCollisionHandler);
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
