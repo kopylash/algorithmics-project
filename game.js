@@ -151,7 +151,7 @@
       bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
     };
 
-    Game.time.events.repeat(Phaser.Timer.SECOND * 10, 3, spawnBook, this);
+    Game.time.events.repeat(Phaser.Timer.SECOND * 1, 3, spawnBook, this);
 
     BookPickupSound = Game.add.audio('coin');
     PowerupSound = Game.add.audio('powerup');
@@ -218,7 +218,6 @@
     if (books.countDead() === 3) {
       PowerupSound.play();
       Game.state.start('SwarmChasing', false, false);
-      player.loadTexture('jaak', 0);
     }
   }
 
@@ -253,6 +252,11 @@
 
   /************* Chasing Mode **************/
   const SwarmChasingGameState = new Phaser.State();
+
+  SwarmChasingGameState.create = function() {
+    player.loadTexture('jaak', 0);
+    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 400, Game.math.random(-1, 1) * 400), this);
+  };
 
   SwarmChasingGameState.update = function() {
     Game.physics.arcade.collide(swarm, swarm);
