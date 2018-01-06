@@ -7,7 +7,9 @@
   let LoadingText,
     ScoreText,
     GameOverText,
-    BookPickupSound;
+    BookPickupSound,
+    PowerupSound,
+    CatchupSound;
 
   const Game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', SCENE);
 
@@ -35,12 +37,15 @@
   PreloaderGameState.preload = function() {
     Game.load.image('startButton', 'assets/sprites/button-start-game.png');
     Game.load.image('sky', 'assets/sprites/sky.png');
-    Game.load.image('master', 'assets/sprites/master.png');
+    Game.load.image('jaak_young', 'assets/sprites/jaak_young.png');
+    Game.load.image('jaak', 'assets/sprites/jaak.png');
     Game.load.image('baddie', 'assets/sprites/space-baddie.png');
     Game.load.image('booksP', 'assets/sprites/booksP.png');
     Game.load.image('booksH', 'assets/sprites/booksH.png');
     Game.load.image('booksD', 'assets/sprites/booksD.png');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
+    Game.load.audio('powerup', 'assets/sounds/powerup.wav');
+    Game.load.audio('catchup', 'assets/sounds/catchup.wav');
   };
 
   PreloaderGameState.create = function() {
@@ -66,8 +71,6 @@
     };
     StartButton = Game.add.button(Game.world.centerX - 100, Game.world.centerY - 45, 'startButton', onStartBtnClick, this);
     StartButton.scale.setTo(0.5, 0.5);
-
-    BookPickupSound = Game.add.audio('coin');
   };
 
 
@@ -87,7 +90,7 @@
 
     ScoreText = Game.add.text(16, 24, 'Score: 0', {fontSize: '28px', fill: '#000'});
 
-    player = Game.add.sprite(32, 200, 'master');
+    player = Game.add.sprite(32, 200, 'jaak_young');
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
@@ -103,6 +106,7 @@
       let s = swarm.create(Game.world.randomX, Game.world.randomY, 'baddie');
       s.name = 'alien' + s;
       s.body.collideWorldBounds = true;
+      s.anchor.set(0.5, 0.5);
       s.body.bounce.setTo(0.8, 0.8);
       s.body.velocity.setTo(10 + Math.random() * 40, 10 + Math.random() * 40);
       s.pBest = Infinity;
@@ -127,12 +131,16 @@
       bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
     };
 
-    Game.time.events.repeat(Phaser.Timer.SECOND * 10, 3, spawnBook, this);
+    Game.time.events.repeat(Phaser.Timer.SECOND * 1, 3, spawnBook, this);
+
+    BookPickupSound = Game.add.audio('coin');
+    PowerupSound = Game.add.audio('powerup');
+    CatchupSound = Game.add.audio('catchup');
   };
 
   GameSwarmState.update = function() {
     Game.physics.arcade.collide(swarm, swarm);
-    Game.physics.arcade.collide(player, swarm, alienCollisionHandler);
+    Game.physics.arcade.collide(player, swarm, swarmEscapeCollisionHandler);
     Game.physics.arcade.collide(player, books, booksCollisionHandler);
 
     player.body.velocity.x = 0;
@@ -176,18 +184,16 @@
     ScoreText.text = 'Score: ' + score;
   }
 
-  function gameOverCheck() {
-    if (!swarm.countLiving()) {
-      Game.state.start('GameOver', false, false);
-    }
-  }
-
-  function alienCollisionHandler(player, alien) {
+  function swarmEscapeCollisionHandler(player, swarmChild) {
     // TODO: implement health bar
   }
 
   function switchMode() {
-
+    if (!books.countLiving()) {
+      PowerupSound.play();
+      Game.state.start('SwarmChasing', false, false);
+      player.loadTexture('jaak', 0);
+    }
   }
 
   function booksCollisionHandler(player, book) {
@@ -218,6 +224,74 @@
     swarm.gBestY = Infinity;
   }
 
+
+  /************* Chasing Mode **************/
+  const SwarmChasingGameState = new Phaser.State();
+
+  SwarmChasingGameState.update = function() {
+    Game.physics.arcade.collide(swarm, swarm);
+    Game.physics.arcade.collide(player, swarm, swarmChasingCollisionHandler);
+
+    player.body.velocity.x = 0;
+    player.body.velocity.y = 0;
+
+    if (cursors.left.isDown) {
+      player.body.velocity.x = -200;
+    } else if (cursors.right.isDown) {
+      player.body.velocity.x = 200;
+    }
+
+    if (cursors.up.isDown) {
+      player.body.velocity.y = -200;
+    } else if (cursors.down.isDown) {
+      player.body.velocity.y = 200;
+    }
+
+    swarm.forEachAlive(child => escapeMovement(child, player), this);
+  };
+
+  function gameOverCheck() {
+    if (!swarm.countLiving()) {
+      Game.state.start('GameOver', false, false);
+    }
+  }
+
+  function swarmChasingCollisionHandler(player, swarmChild) {
+    CatchupSound.play();
+    updateScore(5);
+    swarmChild.kill();
+    gameOverCheck();
+  }
+
+  let p1 = new Phaser.Point();
+  let p2 = new Phaser.Point();
+  let p3 = new Phaser.Point();
+  let p4 = new Phaser.Point();
+  let p5 = new Phaser.Point();
+  let p6 = new Phaser.Point();
+  let p7 = new Phaser.Point();
+  let p8 = new Phaser.Point();
+
+  function generateNearbyPoints(point) {
+    return [
+      p1.copyFrom(point).add(-1, -1),
+      p2.copyFrom(point).add(0, -1),
+      p3.copyFrom(point).add(1, -1),
+      p4.copyFrom(point).add(-1, 0),
+      p5.copyFrom(point).add(1, 0),
+      p6.copyFrom(point).add(-1, 1),
+      p7.copyFrom(point).add(0, 1),
+      p8.copyFrom(point).add(1, 1)
+    ]
+  }
+
+  function escapeMovement(swarmChild, player) {
+    if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
+      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400);
+    }
+  }
+
+
   /************* GameOver ******************/
   const GameOverState = new Phaser.State();
 
@@ -238,6 +312,7 @@
   Game.state.add('Preloader', PreloaderGameState, false);
   Game.state.add('MainMenu', MainMenuGameState, false);
   Game.state.add('GameSwarm', GameSwarmState, false);
+  Game.state.add('SwarmChasing', SwarmChasingGameState, false);
   Game.state.add('GameOver', GameOverState, false);
 
   Game.state.start('Boot');
