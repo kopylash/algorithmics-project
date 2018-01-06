@@ -70,6 +70,9 @@ HealthBar.prototype.drawBackground = function() {
   bmd.ctx.beginPath();
   bmd.ctx.rect(0, 0, this.config.width, this.config.height);
   bmd.ctx.fill();
+  bmd.ctx.fillStyle = 'black';
+  bmd.ctx.rect(0,0, this.config.width, this.config.height);
+  bmd.ctx.stroke();
   bmd.update();
 
   this.bgSprite = this.game.add.sprite(this.x, this.y, bmd);
@@ -82,9 +85,13 @@ HealthBar.prototype.drawHealthBar = function() {
   bmd.ctx.beginPath();
   bmd.ctx.rect(0, 0, this.config.width, this.config.height);
   bmd.ctx.fill();
+  bmd.ctx.fillStyle = 'black';
+  bmd.ctx.rect(0,0, this.config.width, this.config.height);
+  bmd.ctx.stroke();
   bmd.update();
 
   this.barSprite = this.game.add.sprite(this.x - this.bgSprite.width/2, this.y, bmd);
+  this.game.add.sprite(this.barSprite.x-20, this.barSprite.y-16, 'pixel-heart');
   this.barSprite.anchor.y = 0.5;
   if (this.flipped){
     this.barSprite.anchor.x = 1;

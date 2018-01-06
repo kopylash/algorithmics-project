@@ -40,6 +40,7 @@
     Game.load.image('booksP', 'assets/sprites/booksP.png');
     Game.load.image('booksH', 'assets/sprites/booksH.png');
     Game.load.image('booksD', 'assets/sprites/booksD.png');
+    Game.load.image('pixel-heart', 'assets/sprites/pixel-heart.png');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
   };
 
@@ -130,16 +131,18 @@
       bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
     };
 
+    console.log(Game.world);
+
     let healthBarConfig = {
       width: 100,
-      height: 10,
-      x: Game.world.width / 2 + Game.world.width / 4,
-      y: 40,
+      height: 16,
+      x: Game.world.bounds.width - (Game.world.bounds.width / 10),
+      y: 30,
       bg: {
-        color: 'red'
+        color: 'black'
       },
       bar: {
-        color: 'green'
+        color: '#32f210'
       },
       animationDuration: 0.1,
       flipped: false
