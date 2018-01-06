@@ -9,6 +9,7 @@
     GameOverText,
     BookPickupSound,
     PowerupSound,
+    HurtSound,
     CatchupSound;
 
   const Game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', SCENE);
@@ -47,6 +48,7 @@
     Game.load.audio('coin', 'assets/sounds/coin.wav');
     Game.load.audio('powerup', 'assets/sounds/powerup.wav');
     Game.load.audio('catchup', 'assets/sounds/catchup.wav');
+    Game.load.audio('hurt', 'assets/sounds/hurt.wav');
   };
 
   PreloaderGameState.create = function() {
@@ -155,6 +157,7 @@
 
     BookPickupSound = Game.add.audio('coin');
     PowerupSound = Game.add.audio('powerup');
+    HurtSound = Game.add.audio('hurt');
     CatchupSound = Game.add.audio('catchup');
   };
 
@@ -205,6 +208,7 @@
   }
 
   function swarmEscapeCollisionHandler(player, swarmChild) {
+    HurtSound.play();
     player.damage(5);
     swarmChild.kill();
     healthBar.setPercent(player.health);
