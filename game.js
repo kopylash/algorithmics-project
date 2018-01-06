@@ -75,6 +75,7 @@
   const GameSwarmState = new Phaser.State();
 
   let player;
+  let healthBar;
   let swarm;
   let cursors;
   let score = 0;
@@ -91,6 +92,8 @@
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
+    player.maxHealth = 100;
+    player.health = player.maxHealth;
 
 
     swarm = Game.add.group();
@@ -126,6 +129,23 @@
       let bounceTween = Game.add.tween(b);
       bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
     };
+
+    let healthBarConfig = {
+      width: 100,
+      height: 10,
+      x: Game.world.width / 2 + Game.world.width / 4,
+      y: 40,
+      bg: {
+        color: 'red'
+      },
+      bar: {
+        color: 'green'
+      },
+      animationDuration: 0.1,
+      flipped: false
+    };
+
+    healthBar = new HealthBar(Game, healthBarConfig);
 
     Game.time.events.repeat(Phaser.Timer.SECOND * 10, 3, spawnBook, this);
   };
@@ -169,6 +189,11 @@
       }
     }, this);
     swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 100), this);
+
+    if (player.health === 0) {
+      Game.state.start('GameOver', false, false);
+    }
+
   };
 
   function updateScore(points) {
@@ -183,7 +208,9 @@
   }
 
   function alienCollisionHandler(player, alien) {
-    // TODO: implement health bar
+    player.damage(5);
+    alien.kill();
+    healthBar.setPercent(player.health);
   }
 
   function switchMode() {
@@ -222,6 +249,7 @@
   const GameOverState = new Phaser.State();
 
   GameOverState.create = function() {
+    healthBar.setPercent(0);
     GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'YOU ARE JAAK VILO!', {
       font: '32px "Arial"',
       fill: '#FFFFFF',
