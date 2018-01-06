@@ -215,7 +215,7 @@
   }
 
   function switchMode() {
-    if (!books.countLiving()) {
+    if (books.countDead() === 3) {
       PowerupSound.play();
       Game.state.start('SwarmChasing', false, false);
       player.loadTexture('jaak', 0);
