@@ -43,6 +43,7 @@
     Game.load.image('booksP', 'assets/sprites/booksP.png');
     Game.load.image('booksH', 'assets/sprites/booksH.png');
     Game.load.image('booksD', 'assets/sprites/booksD.png');
+    Game.load.image('pixel-heart', 'assets/sprites/pixel-heart.png');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
     Game.load.audio('powerup', 'assets/sounds/powerup.wav');
     Game.load.audio('catchup', 'assets/sounds/catchup.wav');
@@ -78,6 +79,7 @@
   const GameSwarmState = new Phaser.State();
 
   let player;
+  let healthBar;
   let swarm;
   let cursors;
   let score = 0;
@@ -94,6 +96,8 @@
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
+    player.maxHealth = 100;
+    player.health = player.maxHealth;
 
 
     swarm = Game.add.group();
@@ -114,6 +118,22 @@
       s.pBestY = s.y;
     }
 
+    const healthBarConfig = {
+      width: 100,
+      height: 16,
+      x: Game.world.bounds.width - (Game.world.bounds.width / 10),
+      y: 30,
+      bg: {
+        color: 'black'
+      },
+      bar: {
+        color: '#32f210'
+      },
+      flipped: false
+    };
+
+    healthBar = new HealthBar(Game, healthBarConfig);
+
     cursors = Game.input.keyboard.createCursorKeys();
 
     books = Game.add.group();
@@ -131,7 +151,7 @@
       bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
     };
 
-    Game.time.events.repeat(Phaser.Timer.SECOND * 1, 3, spawnBook, this);
+    Game.time.events.repeat(Phaser.Timer.SECOND * 10, 3, spawnBook, this);
 
     BookPickupSound = Game.add.audio('coin');
     PowerupSound = Game.add.audio('powerup');
@@ -185,7 +205,13 @@
   }
 
   function swarmEscapeCollisionHandler(player, swarmChild) {
-    // TODO: implement health bar
+    player.damage(5);
+    swarmChild.kill();
+    healthBar.setPercent(player.health);
+
+    if (player.health === 0) {
+      Game.state.start('GameOver', false, false);
+    }
   }
 
   function switchMode() {
@@ -296,6 +322,7 @@
   const GameOverState = new Phaser.State();
 
   GameOverState.create = function() {
+    healthBar.setPercent(0);
     GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'YOU ARE JAAK VILO!', {
       font: '32px "Arial"',
       fill: '#FFFFFF',
