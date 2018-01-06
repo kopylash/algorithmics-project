@@ -144,7 +144,6 @@
       bar: {
         color: '#32f210'
       },
-      animationDuration: 0.1,
       flipped: false
     };
 
@@ -192,11 +191,6 @@
       }
     }, this);
     swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 100), this);
-
-    if (player.health === 0) {
-      Game.state.start('GameOver', false, false);
-    }
-
   };
 
   function updateScore(points) {
@@ -214,6 +208,10 @@
     player.damage(5);
     alien.kill();
     healthBar.setPercent(player.health);
+
+    if (player.health === 0) {
+      Game.state.start('GameOver', false, false);
+    }
   }
 
   function switchMode() {
