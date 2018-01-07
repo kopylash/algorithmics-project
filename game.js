@@ -14,14 +14,18 @@
     GameOverSound,
     GameWinSound,
     ScoreSound;
+    //ScailingFactor;
 
-  const Game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', SCENE);
-
+  const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * devicePixelRatio, Phaser.CANVAS, 'phaser-example', SCENE);
 
   /************* Boot ******************/
   const BootGameState = new Phaser.State();
 
   BootGameState.create = function() {
+    //ScailingFactor = Game.world.width / 800 ;
+    Game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    Game.scale.pageAlignHorizontally = true;
+    Game.scale.pageAlignVertically = true;
 
     LoadingText = Game.add.text(Game.world.width / 2, Game.world.height / 2, LOADING_TEXT, {
       font: '32px "PressStart2P"',
@@ -30,6 +34,7 @@
       strokeThickness: 3,
       align: 'center'
     });
+    //LoadingText.scale.setTo(ScailingFactor);
     LoadingText.anchor.setTo(0.5, 0.5);
 
     Game.state.start('Preloader', false, false);
@@ -82,7 +87,7 @@
       Game.state.start('Intro', false, false);
     };
     StartButton = Game.add.button(Game.world.centerX - 100, Game.world.centerY - 45, 'startButton', onStartBtnClick, this);
-    StartButton.scale.setTo(0.5, 0.5);
+    //StartButton.scale.setTo(ScailingFactor);
   };
 
   /************* Intro ****************/
@@ -133,6 +138,8 @@
       wordWrapWidth: Game.world.width * 0.9
     });
 
+    //text.scale.setTo(ScailingFactor);
+
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
       letterIndex++;
@@ -161,11 +168,13 @@
 
   GameSwarmState.create = function() {
     Game.physics.startSystem(Phaser.Physics.ARCADE);
-    Game.add.sprite(0, 0, 'sky');
+    let sky = Game.add.sprite(0, 0, 'sky');
+    sky.scale.setTo(Game.world.width / 800, Game.world.height / 600);
 
     ScoreText = Game.add.text(16, 24, 'Score: 0', {font: "25px PressStart2P", fill: '#000'});
 
     player = Game.add.sprite(32, 200, 'jaak_young');
+    //player.scale.setTo(ScailingFactor);
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
@@ -174,6 +183,7 @@
 
 
     swarm = Game.add.group();
+    //swarm.scale.setTo(ScailingFactor);
     swarm.enableBody = true;
     swarm.gBest = Infinity;
     swarm.gBestX = Infinity;
@@ -206,10 +216,12 @@
     };
 
     healthBar = new HealthBar(Game, healthBarConfig);
+    //healthBar.scale.setTo(ScailingFactor);
 
     cursors = Game.input.keyboard.createCursorKeys();
 
     books = Game.add.group();
+    //books.scale.setTo(ScailingFactor);
     Game.physics.arcade.enable(books);
     books.enableBody = true;
 
@@ -282,7 +294,7 @@
     HurtSound.play();
     player.damage(5);
     swarmChild.kill();
-    healthBar.setPercent(player.health);
+      healthBar.setPercent(player.health);
 
     if (player.health === 0) {
       Game.state.start('GameOver', false, false);
@@ -352,6 +364,8 @@
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.8
     });
+
+    //text.scale.setTo(ScailingFactor);
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
