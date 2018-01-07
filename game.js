@@ -462,6 +462,12 @@
     return 'Still Bachelor, train more.'
   }
 
+  function onRetryBtnClick() {
+    booksToSpawn = ['D', 'H', 'P'];
+    score = 0;
+    Game.state.start('GameSwarm', true, false);
+  }
+
   GameOverState.create = function() {
     GameOverSound = Game.add.audio('gameover');
     GameOverSound.play();
@@ -479,10 +485,6 @@
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
-    const onRetryBtnClick = () => {
-      booksToSpawn = ['D', 'H', 'P'];
-      Game.state.start('GameSwarm', true, false);
-    };
     RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
     RetryButton.scale.setTo(0.5, 0.5);
   };
@@ -508,6 +510,9 @@
       align: 'center'
     });
     GameEndText.anchor.setTo(0.5, 0.5);
+
+    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
+    RetryButton.scale.setTo(0.5, 0.5);
   };
 
 
