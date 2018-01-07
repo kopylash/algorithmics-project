@@ -13,7 +13,9 @@
     CatchupSound,
     GameOverSound,
     GameWinSound,
-    ScoreSound;
+    ScoreSound,
+    GamePad,
+    GameStick;
 
   const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'phaser-example', SCENE);
 
@@ -42,6 +44,7 @@
   PreloaderGameState.preload = function() {
     Game.load.image('startButton', 'assets/sprites/btn-start.png');
     Game.load.image('block', 'assets/sprites/block.png');
+    Game.load.atlas('gamepad', 'assets/sprites/arcade-joystick.png', 'assets/sprites/arcade-joystick.json');
     Game.load.image('sky', 'assets/sprites/sky.png');
     Game.load.image('jaak_young', 'assets/sprites/jaak_young.png');
     Game.load.image('baddie', 'assets/sprites/space-baddie.png');
@@ -58,6 +61,7 @@
     Game.load.audio('catchup', 'assets/sounds/catchup.wav');
     Game.load.audio('gameover', 'assets/sounds/gameover.wav');
     Game.load.audio('score', 'assets/sounds/score.wav');
+    Game.load.audio('victory', 'assets/sounds/victory.mp3');
   };
 
   PreloaderGameState.create = function() {
@@ -79,7 +83,7 @@
   MainMenuGameState.create = function() {
     const onStartBtnClick = () => {
       StartButton.inputEnabled = false;
-      Game.state.start('Intro', false, false);
+      Game.state.start('GameSwarm', false, false);
     };
     StartButton = Game.add.button(Game.world.centerX - 88, Game.world.centerY - 38, 'startButton', onStartBtnClick, this);
     StartButton.scale.setTo(0.5, 0.5);
@@ -164,6 +168,10 @@
     let sky = Game.add.sprite(0, 0, 'sky');
     sky.scale.setTo(Game.world.width / 800, Game.world.height / 600);
 
+    GamePad = Game.plugins.add(Phaser.VirtualJoystick);
+    GameStick = GamePad.addStick(0, 0, 100, 'gamepad');
+    GameStick.showOnTouch = true;
+
     ScoreText = Game.add.text(16, 24, 'Score: 0', {font: "25px PressStart2P", fill: '#000'});
 
     player = Game.add.sprite(32, 200, 'jaak_young');
@@ -172,7 +180,6 @@
     player.anchor.set(0.5, 0.5);
     player.maxHealth = 100;
     player.health = player.maxHealth;
-
 
     swarm = Game.add.group();
     swarm.enableBody = true;
@@ -239,22 +246,26 @@
     Game.physics.arcade.collide(player, swarm, swarmEscapeCollisionHandler);
     Game.physics.arcade.collide(player, books, booksCollisionHandler);
 
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
+    if (GameStick.isDown) {
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 250, player.body.velocity);
+      resetPSO(this);
+    } else {
+      player.body.velocity.set(0);
+    }
 
     if (cursors.left.isDown) {
-      player.body.velocity.x = -200;
+      player.body.velocity.x = -250;
       resetPSO(this);
     } else if (cursors.right.isDown) {
-      player.body.velocity.x = 200;
+      player.body.velocity.x = 250;
       resetPSO(this);
     }
 
     if (cursors.up.isDown) {
-      player.body.velocity.y = -200;
+      player.body.velocity.y = -250;
       resetPSO(this);
     } else if (cursors.down.isDown) {
-      player.body.velocity.y = 200;
+      player.body.velocity.y = 250;
       resetPSO(this);
     }
 
@@ -282,6 +293,10 @@
 
   function swarmEscapeCollisionHandler(player, swarmChild) {
     HurtSound.play();
+
+    let tween = Game.add.tween(player).to({alpha: 0.5}, 25, Phaser.Easing.Linear.None, true);
+    tween.onComplete.add(() => player.alpha = 1, this);
+
     player.damage(5);
     swarmChild.kill();
     healthBar.setPercent(player.health);
@@ -326,6 +341,10 @@
     swarm.gBestX = Infinity;
     swarm.gBestY = Infinity;
   }
+
+  GameSwarmState.shutdown = function() {
+    GamePad.removeStick(GameStick);
+  };
 
   /************* Interlude ****************/
   const InterludeGameState = new Phaser.State();
@@ -377,25 +396,32 @@
 
   SwarmChasingGameState.create = function() {
     swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 350, Game.math.random(-1, 1) * 350), this);
+
+    GameStick = GamePad.addStick(0, 0, 100, 'gamepad');
+    GameStick.showOnTouch = true;
   };
 
   SwarmChasingGameState.update = function() {
     Game.physics.arcade.collide(swarm, swarm);
     Game.physics.arcade.collide(player, swarm, swarmChasingCollisionHandler);
 
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
+    if (GameStick.isDown) {
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 350, player.body.velocity);
+      resetPSO(this);
+    } else {
+      player.body.velocity.set(0);
+    }
 
     if (cursors.left.isDown) {
-      player.body.velocity.x = -200;
+      player.body.velocity.x = -350;
     } else if (cursors.right.isDown) {
-      player.body.velocity.x = 200;
+      player.body.velocity.x = 350;
     }
 
     if (cursors.up.isDown) {
-      player.body.velocity.y = -200;
+      player.body.velocity.y = -350;
     } else if (cursors.down.isDown) {
-      player.body.velocity.y = 200;
+      player.body.velocity.y = 350;
     }
 
     swarm.forEachAlive(child => escapeMovement(child, player), this);
@@ -441,6 +467,10 @@
       Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 350);
     }
   }
+
+  SwarmChasingGameState.shutdown = function() {
+    GamePad.removeStick(GameStick);
+  };
 
 
   /************* GameOver ******************/
@@ -496,6 +526,8 @@
 
   GameWinState.create = function() {
     ScoreSound = Game.add.audio('score');
+    GameWinSound = Game.add.audio('victory');
+    GameWinSound.play();
 
     const convertHealthToPoints = () => {
       healthBar.setPercent(0);
@@ -515,6 +547,10 @@
 
     RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
     RetryButton.scale.setTo(0.5, 0.5);
+  };
+
+  GameWinState.shutdown = function() {
+    GameWinSound.stop();
   };
 
 
