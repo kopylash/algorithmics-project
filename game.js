@@ -43,6 +43,8 @@
 
   PreloaderGameState.preload = function() {
     Game.load.image('startButton', 'assets/sprites/btn-start.png');
+    Game.load.image('aboutButton', 'assets/sprites/btn-about.png');
+    Game.load.image('backButton', 'assets/sprites/btn-back.png');
     Game.load.image('block', 'assets/sprites/block.png');
     Game.load.atlas('gamepad', 'assets/sprites/arcade-joystick.png', 'assets/sprites/arcade-joystick.json');
     Game.load.image('sky', 'assets/sprites/sky.png');
@@ -54,6 +56,9 @@
     Game.load.image('booksD', 'assets/sprites/booksD.png');
     Game.load.image('jaak', 'assets/sprites/jaak.png');
     Game.load.image('retryButton', 'assets/sprites/btn-retry-black.png');
+    Game.load.image('logo', 'assets/sprites/logo.png');
+    Game.load.image('utLogo', 'assets/sprites/UTlogo.png');
+    Game.load.image('githubLogo', 'assets/sprites/github-logo.png');
 
     Game.load.audio('hurt', 'assets/sounds/hurt.wav');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
@@ -79,14 +84,86 @@
   const MainMenuGameState = new Phaser.State();
 
   let StartButton;
+  let AboutButton;
+  let logo;
+
 
   MainMenuGameState.create = function() {
+    logo = Game.add.sprite(Game.world.width / 2 - 373, 0, 'logo');
+
     const onStartBtnClick = () => {
-      StartButton.inputEnabled = false;
-      Game.state.start('GameSwarm', false, false);
+      Game.state.start('Intro', true, false);
     };
+    const onAboutBtnClick = () => {
+      Game.state.start('About', true, false);
+    };
+
     StartButton = Game.add.button(Game.world.centerX - 88, Game.world.centerY - 38, 'startButton', onStartBtnClick, this);
     StartButton.scale.setTo(0.5, 0.5);
+    AboutButton = Game.add.button(StartButton.x, StartButton.y + StartButton.height, 'aboutButton', onAboutBtnClick, this);
+    AboutButton.scale.setTo(0.5, 0.5);
+  };
+
+  /************* About ****************/
+  const AboutGameState = new Phaser.State();
+
+  let BackButton;
+  let UTLogo;
+  let GithubLogo;
+
+  AboutGameState.create = function() {
+    const onBackButtonClick = () => {
+      Game.state.start('MainMenu', true, false);
+    };
+
+    const onGithubLogoClick = () => {
+      window.open('https://github.com/kopylash/algorithmics-project', '_blank');
+    };
+
+    UTLogo = Game.add.sprite(Game.world.width - 350, Game.world.height - 60, 'utLogo');
+    UTLogo.scale.setTo(0.25, 0.25);
+
+    GithubLogo = Game.add.button(0, Game.world.height - 100, 'githubLogo', onGithubLogoClick, this);
+    GithubLogo.scale.setTo(0.25, 0.25);
+
+    let title = Game.add.text(Game.world.centerX, 50, 'MTAT.03.238 Advanced Algorithmics project', {
+      font: '25px PressStart2P',
+      fill: "white",
+      align: 'center',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.8
+    });
+
+    title.anchor.setTo(0.5, 0.5);
+
+    const content = 'This is the last project in our master studies. ' +
+      'We used our chance to make something awesome. ' +
+      'While choosing topic we decided to make a game ' +
+      'about our biggest professor - Jaak Vilo. ' +
+      'Credits to him! Thanks for really cool ' +
+      'lectures and sorry that we did`t attend any of them :) ' +
+      '\n' +
+      '\n' +
+      'Big thanks to our TA Dima Fishman for candies and being Dima Fishman! ' +
+      '\n' +
+      '\n' +
+      'With love, creators: Vladyslav Kopylash, Artem Zaitsev, Volodymyr Leno. \n' +
+      '\n' +
+      'PS: Professor, we hope you have a good sense of humor and we won`t be exmatriculated tomorrow! ' +
+      '\n' +
+      '\n' +
+      'Fall 2017';
+
+    let text = Game.add.text(Game.world.width / 10, title.y + 50, content, {
+      font: '25px PressStart2P',
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.8
+    });
+
+    BackButton = Game.add.button(Game.world.width / 2 - 88, text.height+100, 'backButton', onBackButtonClick, this);
+    BackButton.scale.setTo(0.5, 0.5);
   };
 
   /************* Intro ****************/
@@ -558,6 +635,7 @@
   Game.state.add('Boot', BootGameState, false);
   Game.state.add('Preloader', PreloaderGameState, false);
   Game.state.add('MainMenu', MainMenuGameState, false);
+  Game.state.add('About', AboutGameState, false);
   Game.state.add('Intro', IntroGameState, false);
   Game.state.add('Interlude', InterludeGameState, false);
   Game.state.add('GameSwarm', GameSwarmState, false);
