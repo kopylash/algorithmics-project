@@ -101,12 +101,13 @@
       "Only you can save them! \n" +
       "\n" +
       "But first you should get your Ph.D. \n" +
-      "Collect 3 books with valuable knowledge \n" +
-      "And don't let baddies catch you! \n" +
-      "They organised lazy swarm \n" +
-      "Baddies don't know where are you \n" +
+      "Collect 3 books with valuable knowledge. \n" +
+      "And don't let the baddies to catch you! \n" +
+      "\n" +
+      "They organized a lazy swarm. \n" +
+      "Baddies don't know where are you. \n" +
       "But they see the light of knowledge in your heart!\n" +
-      "That's why they know how far you are";
+      "That's why they know how far you are.";
 
     content = content.split('');
 
@@ -336,11 +337,11 @@
 
     let content = "Great Job, professor Vilo! \n" +
       "\n" +
-      "Now you are powerful enough to teach students \n" +
-      "But they are still lazy and don't want to study \n" +
+      "Now you are enough powerful to teach students. \n" +
+      "But they are still lazy and don't want to study. \n" +
       "So you have to catch'em all :) \n" +
       "\n" +
-      "PS: Each caught student will be registered to next Algorithms course";
+      "PS: Each caught student will be registered to next Algorithms course.";
 
 
     content = content.split('');
@@ -445,18 +446,36 @@
 
   let RetryButton;
 
+  function convertScoreToText(score) {
+    if (score >= 370) {
+      return 'Mr. Vilo, is this you?';
+    }
+
+    if (score > 340) {
+      return `Wow, that's Ph.D. level!`;
+    }
+
+    if (score > 290) {
+      return 'You are Master student.';
+    }
+
+    return 'Still Bachelor, train more.'
+  }
+
   GameOverState.create = function() {
     GameOverSound = Game.add.audio('gameover');
     GameOverSound.play();
 
     healthBar.setPercent(0);
 
-    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height * 0.45, 'Game Over', {
+    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
       font: '32px "PressStart2P"',
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
-      align: 'center'
+      align: 'center',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.7
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
@@ -464,7 +483,7 @@
       booksToSpawn = ['D', 'H', 'P'];
       Game.state.start('GameSwarm', true, false);
     };
-    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.6, 'retryButton', onRetryBtnClick, this);
+    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
     RetryButton.scale.setTo(0.5, 0.5);
   };
 
@@ -480,23 +499,6 @@
       updateScore(player.health);
     };
     convertHealthToPoints();
-
-    const convertScoreToText = (score) => {
-      if (score >= 370) {
-        return 'Mr. Vilo, is this you?';
-      }
-
-      if (score > 340) {
-        return `Wow, that's Ph.D. level!`;
-      }
-
-      if (score > 300) {
-        return 'You are Master student.';
-      }
-
-      return 'Still Bachelor, train more.'
-
-    };
 
     GameEndText = Game.add.text(Game.world.width / 2, Game.world.height / 2, `Congrats!\n${convertScoreToText(score)}`, {
       font: '32px "PressStart2P"',
