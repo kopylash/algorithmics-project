@@ -6,7 +6,7 @@
 
   let LoadingText,
     ScoreText,
-    GameOverText,
+    GameEndText,
     BookPickupSound,
     PowerupSound,
     HurtSound,
@@ -40,20 +40,22 @@
   const PreloaderGameState = new Phaser.State();
 
   PreloaderGameState.preload = function() {
-    Game.load.image('startButton', 'assets/sprites/button-start-game.png');
+    Game.load.image('startButton', 'assets/sprites/btn-start.png');
+    Game.load.image('block', 'assets/sprites/block.png');
     Game.load.image('sky', 'assets/sprites/sky.png');
     Game.load.image('jaak_young', 'assets/sprites/jaak_young.png');
-    Game.load.image('jaak', 'assets/sprites/jaak.png');
     Game.load.image('baddie', 'assets/sprites/space-baddie.png');
+    Game.load.image('pixel-heart', 'assets/sprites/pixel-heart.png');
     Game.load.image('booksP', 'assets/sprites/booksP.png');
     Game.load.image('booksH', 'assets/sprites/booksH.png');
     Game.load.image('booksD', 'assets/sprites/booksD.png');
-    Game.load.image('pixel-heart', 'assets/sprites/pixel-heart.png');
-    Game.load.image('block', 'assets/sprites/block.png');
+    Game.load.image('jaak', 'assets/sprites/jaak.png');
+    Game.load.image('retryButton', 'assets/sprites/btn-retry-black.png');
+
+    Game.load.audio('hurt', 'assets/sounds/hurt.wav');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
     Game.load.audio('powerup', 'assets/sounds/powerup.wav');
     Game.load.audio('catchup', 'assets/sounds/catchup.wav');
-    Game.load.audio('hurt', 'assets/sounds/hurt.wav');
     Game.load.audio('gameover', 'assets/sounds/gameover.wav');
     Game.load.audio('score', 'assets/sounds/score.wav');
   };
@@ -154,7 +156,7 @@
   let cursors;
   let score = 0;
   let books;
-  const booksToSpawn = ['D', 'H', 'P'];
+  let booksToSpawn = ['D', 'H', 'P'];
 
   GameSwarmState.create = function() {
     Game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -212,7 +214,7 @@
 
     const spawnBook = () => {
       const name = booksToSpawn.pop();
-      let b = books.create(Game.world.randomX, Game.math.clamp(Game.world.randomY, 100, Game.world.height -200), `books${name}`);
+      let b = books.create(Game.world.randomX, Game.math.clamp(Game.world.randomY, 100, Game.world.height - 200), `books${name}`);
       b.name = name;
       b.body.immovable = true;
       b.body.collideWorldBounds = true;
@@ -371,7 +373,7 @@
   const SwarmChasingGameState = new Phaser.State();
 
   SwarmChasingGameState.create = function() {
-    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 0, Game.math.random(-1, 1) * 0), this);
+    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 350, Game.math.random(-1, 1) * 350), this);
   };
 
   SwarmChasingGameState.update = function() {
@@ -432,14 +434,16 @@
   }
 
   function escapeMovement(swarmChild, player) {
-    // if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
-    //   Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 350);
-    // }
+    if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
+      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 350);
+    }
   }
 
 
   /************* GameOver ******************/
   const GameOverState = new Phaser.State();
+
+  let RetryButton;
 
   GameOverState.create = function() {
     GameOverSound = Game.add.audio('gameover');
@@ -447,29 +451,27 @@
 
     healthBar.setPercent(0);
 
-    GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'Game Over', {
+    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height * 0.45, 'Game Over', {
       font: '32px "PressStart2P"',
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
       align: 'center'
     });
-    GameOverText.anchor.setTo(0.5, 0.5);
+    GameEndText.anchor.setTo(0.5, 0.5);
+
+    const onRetryBtnClick = () => {
+      booksToSpawn = ['D', 'H', 'P'];
+      Game.state.start('GameSwarm', true, false);
+    };
+    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.6, 'retryButton', onRetryBtnClick, this);
+    RetryButton.scale.setTo(0.5, 0.5);
   };
 
   /************* GameWin ******************/
   const GameWinState = new Phaser.State();
 
   GameWinState.create = function() {
-    GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'Congrats', {
-      font: '32px "Arial"',
-      fill: '#FFFFFF',
-      stroke: '#000000',
-      strokeThickness: 3,
-      align: 'center'
-    });
-    GameOverText.anchor.setTo(0.5, 0.5);
-
     ScoreSound = Game.add.audio('score');
 
     const convertHealthToPoints = () => {
@@ -477,8 +479,33 @@
       ScoreSound.play();
       updateScore(player.health);
     };
-
     convertHealthToPoints();
+
+    const convertScoreToText = (score) => {
+      if (score >= 370) {
+        return 'Mr. Vilo, is this you?';
+      }
+
+      if (score > 340) {
+        return `Wow, that's Ph.D. level!`;
+      }
+
+      if (score > 300) {
+        return 'You are Master student.';
+      }
+
+      return 'Still Bachelor, train more.'
+
+    };
+
+    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height / 2, `Congrats!\n${convertScoreToText(score)}`, {
+      font: '32px "PressStart2P"',
+      fill: '#FFFFFF',
+      stroke: '#000000',
+      strokeThickness: 3,
+      align: 'center'
+    });
+    GameEndText.anchor.setTo(0.5, 0.5);
   };
 
 
