@@ -10,7 +10,10 @@
     BookPickupSound,
     PowerupSound,
     HurtSound,
-    CatchupSound;
+    CatchupSound,
+    GameOverSound,
+    GameWinSound,
+    ScoreSound;
 
   const Game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', SCENE);
 
@@ -49,6 +52,8 @@
     Game.load.audio('powerup', 'assets/sounds/powerup.wav');
     Game.load.audio('catchup', 'assets/sounds/catchup.wav');
     Game.load.audio('hurt', 'assets/sounds/hurt.wav');
+    Game.load.audio('gameover', 'assets/sounds/gameover.wav');
+    Game.load.audio('score', 'assets/sounds/score.wav');
   };
 
   PreloaderGameState.create = function() {
@@ -259,7 +264,7 @@
 
   SwarmChasingGameState.create = function() {
     player.loadTexture('jaak', 0);
-    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 400, Game.math.random(-1, 1) * 400), this);
+    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 0, Game.math.random(-1, 1) * 0), this);
   };
 
   SwarmChasingGameState.update = function() {
@@ -284,9 +289,9 @@
     swarm.forEachAlive(child => escapeMovement(child, player), this);
   };
 
-  function gameOverCheck() {
+  function gameWinCheck() {
     if (!swarm.countLiving()) {
-      Game.state.start('GameOver', false, false);
+      Game.state.start('GameWin', false, false);
     }
   }
 
@@ -294,7 +299,7 @@
     CatchupSound.play();
     updateScore(5);
     swarmChild.kill();
-    gameOverCheck();
+    gameWinCheck();
   }
 
   let p1 = new Phaser.Point();
@@ -320,9 +325,9 @@
   }
 
   function escapeMovement(swarmChild, player) {
-    if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
-      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400);
-    }
+    // if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
+    //   Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400);
+    // }
   }
 
 
@@ -330,8 +335,12 @@
   const GameOverState = new Phaser.State();
 
   GameOverState.create = function() {
+    GameOverSound = Game.add.audio('gameover');
+    GameOverSound.play();
+
     healthBar.setPercent(0);
-    GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'YOU ARE JAAK VILO!', {
+
+    GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'Game Over', {
       font: '32px "Arial"',
       fill: '#FFFFFF',
       stroke: '#000000',
@@ -339,6 +348,30 @@
       align: 'center'
     });
     GameOverText.anchor.setTo(0.5, 0.5);
+  };
+
+  /************* GameWin ******************/
+  const GameWinState = new Phaser.State();
+
+  GameWinState.create = function() {
+    GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'Congrats', {
+      font: '32px "Arial"',
+      fill: '#FFFFFF',
+      stroke: '#000000',
+      strokeThickness: 3,
+      align: 'center'
+    });
+    GameOverText.anchor.setTo(0.5, 0.5);
+
+    ScoreSound = Game.add.audio('score');
+
+    const convertHealthToPoints = () => {
+      healthBar.setPercent(0);
+      ScoreSound.play();
+      updateScore(player.health);
+    };
+
+    convertHealthToPoints();
   };
 
 
@@ -349,6 +382,7 @@
   Game.state.add('GameSwarm', GameSwarmState, false);
   Game.state.add('SwarmChasing', SwarmChasingGameState, false);
   Game.state.add('GameOver', GameOverState, false);
+  Game.state.add('GameWin', GameWinState, false);
 
   Game.state.start('Boot');
 
