@@ -14,7 +14,6 @@
     GameOverSound,
     GameWinSound,
     ScoreSound;
-    //ScalingFactor;
 
   const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'phaser-example', SCENE);
 
@@ -22,7 +21,6 @@
   const BootGameState = new Phaser.State();
 
   BootGameState.create = function() {
-    //ScalingFactor = Game.world.width / 800 ;
     Game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
     LoadingText = Game.add.text(Game.world.width / 2, Game.world.height / 2, LOADING_TEXT, {
@@ -32,7 +30,6 @@
       strokeThickness: 3,
       align: 'center'
     });
-    //LoadingText.scale.setTo(ScalingFactor);
     LoadingText.anchor.setTo(0.5, 0.5);
 
     Game.state.start('Preloader', false, false);
@@ -84,8 +81,8 @@
       StartButton.inputEnabled = false;
       Game.state.start('Intro', false, false);
     };
-    StartButton = Game.add.button(Game.world.centerX - 100, Game.world.centerY - 45, 'startButton', onStartBtnClick, this);
-    //StartButton.scale.setTo(ScalingFactor);
+    StartButton = Game.add.button(Game.world.centerX - 88, Game.world.centerY - 38, 'startButton', onStartBtnClick, this);
+    StartButton.scale.setTo(0.5, 0.5);
   };
 
   /************* Intro ****************/
@@ -136,8 +133,6 @@
       wordWrapWidth: Game.world.width * 0.9
     });
 
-    //text.scale.setTo(ScalingFactor);
-
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
       letterIndex++;
@@ -172,7 +167,6 @@
     ScoreText = Game.add.text(16, 24, 'Score: 0', {font: "25px PressStart2P", fill: '#000'});
 
     player = Game.add.sprite(32, 200, 'jaak_young');
-    //player.scale.setTo(ScalingFactor);
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
@@ -181,7 +175,6 @@
 
 
     swarm = Game.add.group();
-    //swarm.scale.setTo(ScalingFactor);
     swarm.enableBody = true;
     swarm.gBest = Infinity;
     swarm.gBestX = Infinity;
@@ -214,12 +207,11 @@
     };
 
     healthBar = new HealthBar(Game, healthBarConfig);
-    //healthBar.scale.setTo(ScalingFactor);
 
     cursors = Game.input.keyboard.createCursorKeys();
 
     books = Game.add.group();
-    //books.scale.setTo(ScalingFactor);
+    books.scale.setTo(1.2);
     Game.physics.arcade.enable(books);
     books.enableBody = true;
 
@@ -292,7 +284,7 @@
     HurtSound.play();
     player.damage(5);
     swarmChild.kill();
-      healthBar.setPercent(player.health);
+    healthBar.setPercent(player.health);
 
     if (player.health === 0) {
       Game.state.start('GameOver', false, false);
@@ -362,8 +354,6 @@
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.8
     });
-
-    //text.scale.setTo(ScalingFactor);
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
