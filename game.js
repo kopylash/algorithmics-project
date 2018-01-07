@@ -14,18 +14,16 @@
     GameOverSound,
     GameWinSound,
     ScoreSound;
-    //ScailingFactor;
+    //ScalingFactor;
 
-  const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * devicePixelRatio, Phaser.CANVAS, 'phaser-example', SCENE);
+  const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'phaser-example', SCENE);
 
   /************* Boot ******************/
   const BootGameState = new Phaser.State();
 
   BootGameState.create = function() {
-    //ScailingFactor = Game.world.width / 800 ;
+    //ScalingFactor = Game.world.width / 800 ;
     Game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    Game.scale.pageAlignHorizontally = true;
-    Game.scale.pageAlignVertically = true;
 
     LoadingText = Game.add.text(Game.world.width / 2, Game.world.height / 2, LOADING_TEXT, {
       font: '32px "PressStart2P"',
@@ -34,7 +32,7 @@
       strokeThickness: 3,
       align: 'center'
     });
-    //LoadingText.scale.setTo(ScailingFactor);
+    //LoadingText.scale.setTo(ScalingFactor);
     LoadingText.anchor.setTo(0.5, 0.5);
 
     Game.state.start('Preloader', false, false);
@@ -87,7 +85,7 @@
       Game.state.start('Intro', false, false);
     };
     StartButton = Game.add.button(Game.world.centerX - 100, Game.world.centerY - 45, 'startButton', onStartBtnClick, this);
-    //StartButton.scale.setTo(ScailingFactor);
+    //StartButton.scale.setTo(ScalingFactor);
   };
 
   /************* Intro ****************/
@@ -138,7 +136,7 @@
       wordWrapWidth: Game.world.width * 0.9
     });
 
-    //text.scale.setTo(ScailingFactor);
+    //text.scale.setTo(ScalingFactor);
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
@@ -174,7 +172,7 @@
     ScoreText = Game.add.text(16, 24, 'Score: 0', {font: "25px PressStart2P", fill: '#000'});
 
     player = Game.add.sprite(32, 200, 'jaak_young');
-    //player.scale.setTo(ScailingFactor);
+    //player.scale.setTo(ScalingFactor);
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
@@ -183,7 +181,7 @@
 
 
     swarm = Game.add.group();
-    //swarm.scale.setTo(ScailingFactor);
+    //swarm.scale.setTo(ScalingFactor);
     swarm.enableBody = true;
     swarm.gBest = Infinity;
     swarm.gBestX = Infinity;
@@ -216,12 +214,12 @@
     };
 
     healthBar = new HealthBar(Game, healthBarConfig);
-    //healthBar.scale.setTo(ScailingFactor);
+    //healthBar.scale.setTo(ScalingFactor);
 
     cursors = Game.input.keyboard.createCursorKeys();
 
     books = Game.add.group();
-    //books.scale.setTo(ScailingFactor);
+    //books.scale.setTo(ScalingFactor);
     Game.physics.arcade.enable(books);
     books.enableBody = true;
 
@@ -365,7 +363,7 @@
       wordWrapWidth: Game.world.width * 0.8
     });
 
-    //text.scale.setTo(ScailingFactor);
+    //text.scale.setTo(ScalingFactor);
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
