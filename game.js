@@ -337,7 +337,7 @@
 
     let content = "Great Job, professor Vilo! \n" +
       "\n" +
-      "Now you are enough powerful to teach students. \n" +
+      "Now you are powerful enough to teach students. \n" +
       "But they are still lazy and don't want to study. \n" +
       "So you have to catch'em all :) \n" +
       "\n" +
