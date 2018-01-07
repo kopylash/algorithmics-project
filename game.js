@@ -82,7 +82,6 @@
   const IntroGameState = new Phaser.State();
 
   IntroGameState.create = function() {
-
     let letterIndex = 0;
     let letterDelay = 50;
 
@@ -133,52 +132,6 @@
       if (letterIndex === content.length) {
         setTimeout(() => {
           Game.state.start("GameSwarm", false, false)
-        }, 4000);
-      }
-
-    };
-
-    Game.time.events.repeat(letterDelay, content.length, nextLetter, this);
-  };
-
-
-  /************* Interlude ****************/
-  const InterludeGameState = new Phaser.State();
-
-  InterludeGameState.create = function() {
-
-    player.body.stop();
-    Game.physics.arcade.moveToXY(player,Game.world.width/2, Game.world.height, 200);
-
-    let letterIndex = 0;
-    let letterDelay = 50;
-
-    let content = "Great Job, professor Vilo! \n" +
-      "\n" +
-      "Now you are powerful enough to teach students \n" +
-      "But they are still lazy and don't want to study \n" +
-      "So you have to catch'em all :) \n" +
-      "\n" +
-      "PS: Each caught student will be registered to next Algorithms course";
-
-
-    content = content.split('');
-
-    let text = Game.add.text(Game.world.width*0.1, Game.world.height/4, '', {
-      font: '15px PressStart2P',
-      fill: "white",
-      wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.8
-    });
-
-    const nextLetter = () => {
-      text.text = text.text.concat(content[letterIndex]);
-      letterIndex++;
-
-      if (letterIndex === content.length) {
-        setTimeout(() => {
-          Game.state.start("SwarmChasing", false, false);
-          text.kill();
         }, 4000);
       }
 
@@ -363,6 +316,50 @@
     swarm.gBestX = Infinity;
     swarm.gBestY = Infinity;
   }
+
+  /************* Interlude ****************/
+  const InterludeGameState = new Phaser.State();
+
+  InterludeGameState.create = function() {
+    player.body.stop();
+    Game.physics.arcade.moveToXY(player, Game.world.width / 2, Game.world.height, 200);
+
+    let letterIndex = 0;
+    let letterDelay = 50;
+
+    let content = "Great Job, professor Vilo! \n" +
+      "\n" +
+      "Now you are powerful enough to teach students \n" +
+      "But they are still lazy and don't want to study \n" +
+      "So you have to catch'em all :) \n" +
+      "\n" +
+      "PS: Each caught student will be registered to next Algorithms course";
+
+
+    content = content.split('');
+
+    let text = Game.add.text(Game.world.width * 0.1, Game.world.height / 4, '', {
+      font: '15px PressStart2P',
+      fill: "white",
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.8
+    });
+
+    const nextLetter = () => {
+      text.text = text.text.concat(content[letterIndex]);
+      letterIndex++;
+
+      if (letterIndex === content.length) {
+        setTimeout(() => {
+          Game.state.start("SwarmChasing", false, false);
+          text.kill();
+        }, 4000);
+      }
+
+    };
+
+    Game.time.events.repeat(letterDelay, content.length, nextLetter, this);
+  };
 
 
   /************* Chasing Mode **************/
