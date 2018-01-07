@@ -93,7 +93,7 @@
       "Jaak, you are the chosen one! \n" +
       "Only you can save them! \n" +
       "\n" +
-      "But first you should get your PhD \n" +
+      "But first you should get your Ph.D. \n" +
       "Collect 3 books with valuable knowledge \n" +
       "And don't let baddies catch you! \n" +
       "They organised lazy swarm \n" +
@@ -172,7 +172,7 @@
     swarm.gBestY = Infinity;
 
     for (let i = 0; i < 30; i++) {
-      let s = swarm.create(Game.world.randomX, Game.world.randomY, 'baddie');
+      let s = swarm.create(Game.math.clamp(Game.world.randomX, 200, Game.world.width), Game.world.randomY, 'baddie');
       s.name = 'alien' + s;
       s.body.collideWorldBounds = true;
       s.anchor.set(0.5, 0.5);
@@ -207,7 +207,7 @@
 
     const spawnBook = () => {
       const name = booksToSpawn.pop();
-      let b = books.create(Game.world.randomX, Game.world.randomY, `books${name}`);
+      let b = books.create(Game.world.randomX, Game.math.clamp(Game.world.randomY, 100, Game.world.height -200), `books${name}`);
       b.name = name;
       b.body.immovable = true;
       b.body.collideWorldBounds = true;
@@ -262,7 +262,7 @@
         swarm.gBestY = child.y;
       }
     }, this);
-    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 100), this);
+    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 130), this);
   };
 
   function updateScore(points) {
@@ -428,7 +428,7 @@
 
   function escapeMovement(swarmChild, player) {
     if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
-      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400);
+      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 350);
     }
   }
 
