@@ -22,8 +22,9 @@
   const BootGameState = new Phaser.State();
 
   BootGameState.create = function() {
+
     LoadingText = Game.add.text(Game.world.width / 2, Game.world.height / 2, LOADING_TEXT, {
-      font: '32px "Arial"',
+      font: '32px "PressStart2P"',
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
@@ -48,6 +49,7 @@
     Game.load.image('booksH', 'assets/sprites/booksH.png');
     Game.load.image('booksD', 'assets/sprites/booksD.png');
     Game.load.image('pixel-heart', 'assets/sprites/pixel-heart.png');
+    Game.load.image('block', 'assets/sprites/block.png');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
     Game.load.audio('powerup', 'assets/sounds/powerup.wav');
     Game.load.audio('catchup', 'assets/sounds/catchup.wav');
@@ -75,12 +77,73 @@
   MainMenuGameState.create = function() {
     const onStartBtnClick = () => {
       StartButton.inputEnabled = false;
-      Game.state.start('GameSwarm', false, false);
+      Game.state.start('Intro', false, false);
     };
     StartButton = Game.add.button(Game.world.centerX - 100, Game.world.centerY - 45, 'startButton', onStartBtnClick, this);
     StartButton.scale.setTo(0.5, 0.5);
   };
 
+  /************* Intro ****************/
+  const IntroGameState = new Phaser.State();
+
+  IntroGameState.create = function() {
+    let letterIndex = 0;
+    let letterDelay = 50;
+
+    let content = "Long time ago, in Finland... \n" +
+      "\n" +
+      "Horrible disaster happened. \n" +
+      "Laziness turned all students into dummy baddies :( \n" +
+      "\n" +
+      "Jaak, you are the chosen one! \n" +
+      "Only you can save them! \n" +
+      "\n" +
+      "But first you should get your Ph.D. \n" +
+      "Collect 3 books with valuable knowledge \n" +
+      "And don't let baddies catch you! \n" +
+      "They organised lazy swarm \n" +
+      "Baddies don't know where are you \n" +
+      "But they see the light of knowledge in your heart!\n" +
+      "That's why they know how far you are";
+
+    content = content.split('');
+
+    StartButton.kill();
+
+    for (let i = 0; i < Game.world.width; i += 32) {
+      Game.add.sprite(i, 0, 'block');
+    }
+    for (let i = 0; i < Game.world.width; i += 32) {
+      Game.add.sprite(i, Game.world.height - 32, 'block');
+    }
+    for (let i = 32; i < Game.world.height; i += 32) {
+      Game.add.sprite(0, i, 'block');
+    }
+    for (let i = 32; i < Game.world.height; i += 32) {
+      Game.add.sprite(Game.world.width - 32, i, 'block');
+    }
+
+    let text = Game.add.text(50, 50, '', {
+      font: '15px PressStart2P',
+      fill: "white",
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.9
+    });
+
+    const nextLetter = () => {
+      text.text = text.text.concat(content[letterIndex]);
+      letterIndex++;
+
+      if (letterIndex === content.length) {
+        setTimeout(() => {
+          Game.state.start("GameSwarm", false, false)
+        }, 4000);
+      }
+
+    };
+
+    Game.time.events.repeat(letterDelay, content.length, nextLetter, this);
+  };
 
   /************* GameSwarm ******************/
   const GameSwarmState = new Phaser.State();
@@ -97,7 +160,7 @@
     Game.physics.startSystem(Phaser.Physics.ARCADE);
     Game.add.sprite(0, 0, 'sky');
 
-    ScoreText = Game.add.text(16, 24, 'Score: 0', {fontSize: '28px', fill: '#000'});
+    ScoreText = Game.add.text(16, 24, 'Score: 0', {font: "25px PressStart2P", fill: '#000'});
 
     player = Game.add.sprite(32, 200, 'jaak_young');
     Game.physics.arcade.enable(player);
@@ -114,7 +177,7 @@
     swarm.gBestY = Infinity;
 
     for (let i = 0; i < 30; i++) {
-      let s = swarm.create(Game.world.randomX, Game.world.randomY, 'baddie');
+      let s = swarm.create(Game.math.clamp(Game.world.randomX, 200, Game.world.width), Game.world.randomY, 'baddie');
       s.name = 'alien' + s;
       s.body.collideWorldBounds = true;
       s.anchor.set(0.5, 0.5);
@@ -149,7 +212,7 @@
 
     const spawnBook = () => {
       const name = booksToSpawn.pop();
-      let b = books.create(Game.world.randomX, Game.world.randomY, `books${name}`);
+      let b = books.create(Game.world.randomX, Game.math.clamp(Game.world.randomY, 100, Game.world.height -200), `books${name}`);
       b.name = name;
       b.body.immovable = true;
       b.body.collideWorldBounds = true;
@@ -204,7 +267,7 @@
         swarm.gBestY = child.y;
       }
     }, this);
-    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 100), this);
+    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 130), this);
   };
 
   function updateScore(points) {
@@ -226,7 +289,8 @@
   function switchMode() {
     if (books.countDead() === 3) {
       PowerupSound.play();
-      Game.state.start('SwarmChasing', false, false);
+      player.loadTexture('jaak', 0);
+      Game.state.start('Interlude', false, false);
     }
   }
 
@@ -258,12 +322,55 @@
     swarm.gBestY = Infinity;
   }
 
+  /************* Interlude ****************/
+  const InterludeGameState = new Phaser.State();
+
+  InterludeGameState.create = function() {
+    player.body.stop();
+    Game.physics.arcade.moveToXY(player, Game.world.width / 2, Game.world.height, 200);
+
+    let letterIndex = 0;
+    let letterDelay = 50;
+
+    let content = "Great Job, professor Vilo! \n" +
+      "\n" +
+      "Now you are powerful enough to teach students \n" +
+      "But they are still lazy and don't want to study \n" +
+      "So you have to catch'em all :) \n" +
+      "\n" +
+      "PS: Each caught student will be registered to next Algorithms course";
+
+
+    content = content.split('');
+
+    let text = Game.add.text(Game.world.width * 0.1, Game.world.height / 4, '', {
+      font: '15px PressStart2P',
+      fill: "white",
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.8
+    });
+
+    const nextLetter = () => {
+      text.text = text.text.concat(content[letterIndex]);
+      letterIndex++;
+
+      if (letterIndex === content.length) {
+        setTimeout(() => {
+          Game.state.start("SwarmChasing", false, false);
+          text.kill();
+        }, 4000);
+      }
+
+    };
+
+    Game.time.events.repeat(letterDelay, content.length, nextLetter, this);
+  };
+
 
   /************* Chasing Mode **************/
   const SwarmChasingGameState = new Phaser.State();
 
   SwarmChasingGameState.create = function() {
-    player.loadTexture('jaak', 0);
     swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 0, Game.math.random(-1, 1) * 0), this);
   };
 
@@ -326,7 +433,7 @@
 
   function escapeMovement(swarmChild, player) {
     // if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
-    //   Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400);
+    //   Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 350);
     // }
   }
 
@@ -341,7 +448,7 @@
     healthBar.setPercent(0);
 
     GameOverText = Game.add.text(Game.world.width / 2, Game.world.height / 2, 'Game Over', {
-      font: '32px "Arial"',
+      font: '32px "PressStart2P"',
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
@@ -379,6 +486,8 @@
   Game.state.add('Boot', BootGameState, false);
   Game.state.add('Preloader', PreloaderGameState, false);
   Game.state.add('MainMenu', MainMenuGameState, false);
+  Game.state.add('Intro', IntroGameState, false);
+  Game.state.add('Interlude', InterludeGameState, false);
   Game.state.add('GameSwarm', GameSwarmState, false);
   Game.state.add('SwarmChasing', SwarmChasingGameState, false);
   Game.state.add('GameOver', GameOverState, false);
