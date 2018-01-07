@@ -61,6 +61,7 @@
     Game.load.audio('catchup', 'assets/sounds/catchup.wav');
     Game.load.audio('gameover', 'assets/sounds/gameover.wav');
     Game.load.audio('score', 'assets/sounds/score.wav');
+    Game.load.audio('victory', 'assets/sounds/victory.mp3');
   };
 
   PreloaderGameState.create = function() {
@@ -525,6 +526,8 @@
 
   GameWinState.create = function() {
     ScoreSound = Game.add.audio('score');
+    GameWinSound = Game.add.audio('victory');
+    GameWinSound.play();
 
     const convertHealthToPoints = () => {
       healthBar.setPercent(0);
@@ -544,6 +547,10 @@
 
     RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
     RetryButton.scale.setTo(0.5, 0.5);
+  };
+
+  GameWinState.shutdown = function() {
+    GameWinSound.stop();
   };
 
 
