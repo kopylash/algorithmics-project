@@ -127,11 +127,11 @@
     GithubLogo.scale.setTo(0.25, 0.25);
 
     let title = Game.add.text(Game.world.centerX, 50, 'MTAT.03.238 Advanced Algorithmics project', {
-      font: '25px PressStart2P',
+      font: '22px PressStart2P',
       fill: "white",
       align: 'center',
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.8
+      wordWrapWidth: Game.world.width * 0.85
     });
 
     title.anchor.setTo(0.5, 0.5);
@@ -155,14 +155,16 @@
       'Fall 2017';
 
     let text = Game.add.text(Game.world.width / 10, title.y + 50, content, {
-      font: '25px PressStart2P',
+      font: '20px PressStart2P',
       fill: "white",
       align: 'left',
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.8
+      wordWrapWidth: Game.world.width * 0.85
     });
 
-    BackButton = Game.add.button(Game.world.width / 2 - 88, text.height+100, 'backButton', onBackButtonClick, this);
+    text.lineSpacing = 3;
+
+    BackButton = Game.add.button(Game.world.width / 2 - 88, text.height + 100, 'backButton', onBackButtonClick, this);
     BackButton.scale.setTo(0.5, 0.5);
   };
 
@@ -208,11 +210,13 @@
     }
 
     let text = Game.add.text(50, 50, '', {
-      font: '15px PressStart2P',
+      font: '18px PressStart2P',
       fill: "white",
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.9
+      wordWrapWidth: Game.world.width * 0.85
     });
+
+    text.lineSpacing = 5;
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
@@ -221,7 +225,7 @@
       if (letterIndex === content.length) {
         setTimeout(() => {
           Game.state.start("GameSwarm", false, false)
-        }, 4000);
+        }, 3000);
       }
 
     };
@@ -324,7 +328,7 @@
     Game.physics.arcade.collide(player, books, booksCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 250, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 370, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
@@ -483,7 +487,7 @@
     Game.physics.arcade.collide(player, swarm, swarmChasingCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 350, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 500, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
@@ -583,14 +587,14 @@
 
     healthBar.setPercent(0);
 
-    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
+    GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
       font: '32px "PressStart2P"',
       fill: '#FFFFFF',
       stroke: '#000000',
-      strokeThickness: 3,
+      strokeThickness: 2,
       align: 'center',
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.7
+      wordWrapWidth: Game.world.width * 0.85
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
@@ -613,12 +617,14 @@
     };
     convertHealthToPoints();
 
-    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height / 2, `Congrats!\n${convertScoreToText(score)}`, {
+    GameEndText = Game.add.text(Game.world.centerX, Game.world.centerY, `Congrats!\n${convertScoreToText(score)}`, {
       font: '32px "PressStart2P"',
       fill: '#FFFFFF',
       stroke: '#000000',
-      strokeThickness: 3,
-      align: 'center'
+      strokeThickness: 2,
+      align: 'center',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
