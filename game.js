@@ -166,8 +166,9 @@
 
     text.lineSpacing = 3;
 
-    BackButton = Game.add.button(Game.world.width / 2 - 88, text.height + 100, 'backButton', onBackButtonClick, this);
-    BackButton.scale.setTo(0.5, 0.5);
+    BackButton = Game.add.button(Game.world.centerX, text.height + 100, 'backButton', onBackButtonClick, this);
+    BackButton.scale.setTo(textScaleFactor * 0.35);
+    BackButton.anchor.setTo(0.5, 0);
   };
 
   /************* Intro ****************/
