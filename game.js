@@ -328,7 +328,7 @@
     Game.physics.arcade.collide(player, books, booksCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 370, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 420, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
@@ -364,7 +364,7 @@
         swarm.gBestY = child.y;
       }
     }, this);
-    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 130), this);
+    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 150), this);
   };
 
   function updateScore(points) {
@@ -375,7 +375,7 @@
   function swarmEscapeCollisionHandler(player, swarmChild) {
     HurtSound.play();
 
-    let tween = Game.add.tween(player).to({alpha: 0.5}, 25, Phaser.Easing.Linear.None, true);
+    let tween = Game.add.tween(player).to({alpha: 0.5}, 60, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(() => player.alpha = 1, this);
 
     player.damage(5);
@@ -449,7 +449,7 @@
     content = content.split('');
 
     let text = Game.add.text(Game.world.width * 0.1, Game.world.height / 4, '', {
-      font: '15px PressStart2P',
+      font: '18px PressStart2P',
       fill: "white",
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.8
@@ -476,7 +476,7 @@
   const SwarmChasingGameState = new Phaser.State();
 
   SwarmChasingGameState.create = function() {
-    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 350, Game.math.random(-1, 1) * 350), this);
+    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 370, Game.math.random(-1, 1) * 350), this);
 
     GameStick = GamePad.addStick(0, 0, 100, 'gamepad');
     GameStick.showOnTouch = true;
@@ -487,7 +487,7 @@
     Game.physics.arcade.collide(player, swarm, swarmChasingCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 500, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 550, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
@@ -544,8 +544,8 @@
   }
 
   function escapeMovement(swarmChild, player) {
-    if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
-      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 350);
+    if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 150) {
+      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400);
     }
   }
 
@@ -560,15 +560,15 @@
   let RetryButton;
 
   function convertScoreToText(score) {
-    if (score >= 370) {
+    if (score >= 360) {
       return 'Mr. Vilo, is this you?';
     }
 
-    if (score > 340) {
+    if (score > 320) {
       return `Wow, that's Ph.D. level!`;
     }
 
-    if (score > 290) {
+    if (score > 280) {
       return 'You are Master student.';
     }
 
