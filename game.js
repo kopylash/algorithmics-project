@@ -17,6 +17,8 @@
     GamePad,
     GameStick;
 
+  const textScaleFactor = window.devicePixelRatio <= 1 ? 2 : window.devicePixelRatio;
+
   const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'phaser-example', SCENE);
 
   /************* Boot ******************/
@@ -26,7 +28,7 @@
     Game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
     LoadingText = Game.add.text(Game.world.width / 2, Game.world.height / 2, LOADING_TEXT, {
-      font: '32px "PressStart2P"',
+      font: `${textScaleFactor * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
@@ -98,10 +100,10 @@
       Game.state.start('About', true, false);
     };
 
-    StartButton = Game.add.button(Game.world.centerX - 88, Game.world.centerY - 38, 'startButton', onStartBtnClick, this);
-    StartButton.scale.setTo(0.5, 0.5);
-    AboutButton = Game.add.button(StartButton.x, StartButton.y + StartButton.height, 'aboutButton', onAboutBtnClick, this);
-    AboutButton.scale.setTo(0.5, 0.5);
+    StartButton = Game.add.button(Game.world.centerX, Game.world.centerY, 'startButton', onStartBtnClick, this);
+    StartButton.anchor.setTo(0.5);
+    AboutButton = Game.add.button(StartButton.x, StartButton.y + StartButton.height + 10, 'aboutButton', onAboutBtnClick, this);
+    AboutButton.anchor.setTo(0.5);
   };
 
   /************* About ****************/
@@ -127,7 +129,7 @@
     GithubLogo.scale.setTo(0.25, 0.25);
 
     let title = Game.add.text(Game.world.centerX, 50, 'MTAT.03.238 Advanced Algorithmics project', {
-      font: '22px PressStart2P',
+      font: `${textScaleFactor * 1.15}em PressStart2P`,
       fill: "white",
       align: 'center',
       wordWrap: true,
@@ -136,7 +138,7 @@
 
     title.anchor.setTo(0.5, 0.5);
 
-    const content = 'This is the last project in our master studies. ' +
+    const content = '\nThis is the last project in our master studies. ' +
       'We used our chance to make something awesome. ' +
       'While choosing topic we decided to make a game ' +
       'about our biggest professor - Jaak Vilo. ' +
@@ -155,7 +157,7 @@
       'Fall 2017';
 
     let text = Game.add.text(Game.world.width / 10, title.y + 50, content, {
-      font: '20px PressStart2P',
+      font: `${textScaleFactor}em PressStart2P`,
       fill: "white",
       align: 'left',
       wordWrap: true,
@@ -210,7 +212,7 @@
     }
 
     let text = Game.add.text(50, 50, '', {
-      font: '18px PressStart2P',
+      font: `${textScaleFactor}em PressStart2P`,
       fill: "white",
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.85
@@ -225,7 +227,7 @@
       if (letterIndex === content.length) {
         setTimeout(() => {
           Game.state.start("GameSwarm", false, false)
-        }, 3000);
+        }, 2000);
       }
 
     };
@@ -335,18 +337,18 @@
     }
 
     if (cursors.left.isDown) {
-      player.body.velocity.x = -250;
+      player.body.velocity.x = -300;
       resetPSO(this);
     } else if (cursors.right.isDown) {
-      player.body.velocity.x = 250;
+      player.body.velocity.x = 300;
       resetPSO(this);
     }
 
     if (cursors.up.isDown) {
-      player.body.velocity.y = -250;
+      player.body.velocity.y = -300;
       resetPSO(this);
     } else if (cursors.down.isDown) {
-      player.body.velocity.y = 250;
+      player.body.velocity.y = 300;
       resetPSO(this);
     }
 
@@ -364,7 +366,7 @@
         swarm.gBestY = child.y;
       }
     }, this);
-    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 150), this);
+    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 250), this);
   };
 
   function updateScore(points) {
@@ -449,11 +451,13 @@
     content = content.split('');
 
     let text = Game.add.text(Game.world.width * 0.1, Game.world.height / 4, '', {
-      font: '18px PressStart2P',
+      font: `${textScaleFactor}em PressStart2P`,
       fill: "white",
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.8
+      wordWrapWidth: Game.world.width * 0.85
     });
+
+    text.lineSpacing = 5;
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
@@ -463,7 +467,7 @@
         setTimeout(() => {
           Game.state.start("SwarmChasing", false, false);
           text.kill();
-        }, 4000);
+        }, 3000);
       }
 
     };
@@ -588,18 +592,18 @@
     healthBar.setPercent(0);
 
     GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
-      font: '32px "PressStart2P"',
+      font: `${textScaleFactor * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
-      strokeThickness: 2,
+      strokeThickness: 3,
       align: 'center',
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.85
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
-    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
-    RetryButton.scale.setTo(0.5, 0.5);
+    RetryButton = Game.add.button(Game.world.centerX, Game.world.height * 0.7, 'retryButton', onRetryBtnClick, this);
+    RetryButton.anchor.setTo(0.5);
   };
 
   /************* GameWin ******************/
@@ -617,19 +621,19 @@
     };
     convertHealthToPoints();
 
-    GameEndText = Game.add.text(Game.world.centerX, Game.world.centerY, `Congrats!\n${convertScoreToText(score)}`, {
-      font: '32px "PressStart2P"',
+    GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Congrats!\n${convertScoreToText(score)}`, {
+      font: `${textScaleFactor * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
-      strokeThickness: 2,
+      strokeThickness: 3,
       align: 'center',
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.85
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
-    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
-    RetryButton.scale.setTo(0.5, 0.5);
+    RetryButton = Game.add.button(Game.world.centerX, Game.world.height * 0.7, 'retryButton', onRetryBtnClick, this);
+    RetryButton.anchor.setTo(0.5);
   };
 
   GameWinState.shutdown = function() {
