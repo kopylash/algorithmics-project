@@ -17,7 +17,14 @@
     GamePad,
     GameStick;
 
-  const textScaleFactor = window.devicePixelRatio <= 1 ? 2 : window.devicePixelRatio;
+  const TEXT_SCALE_FACTOR = window.devicePixelRatio <= 1 ? 2 : window.devicePixelRatio;
+  const VELOCITY_SCALE_FACTOR = window.devicePixelRatio >= 3 ? 2 : 1;
+
+  const scaleAsset = (asset, defaultWidth = 720, defaultHeight = 1280) => {
+    if (window.devicePixelRatio > 1) {
+      asset.scale.setTo(window.innerWidth * window.devicePixelRatio / defaultWidth, window.innerHeight * window.devicePixelRatio / defaultHeight);
+    }
+  };
 
   const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'phaser-example', SCENE);
 
@@ -28,7 +35,7 @@
     Game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
     LoadingText = Game.add.text(Game.world.width / 2, Game.world.height / 2, LOADING_TEXT, {
-      font: `${textScaleFactor * 2}em "PressStart2P"`,
+      font: `${TEXT_SCALE_FACTOR * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
@@ -59,7 +66,7 @@
     Game.load.image('jaak', 'assets/sprites/jaak.png');
     Game.load.image('retryButton', 'assets/sprites/btn-retry-black.png');
     Game.load.image('logo', 'assets/sprites/logo.png');
-    Game.load.image('utLogo', 'assets/sprites/UTlogo.png');
+    Game.load.image('utLogo', 'assets/sprites/ut-logo.png');
     Game.load.image('githubLogo', 'assets/sprites/github-logo.png');
 
     Game.load.audio('hurt', 'assets/sounds/hurt.wav');
@@ -89,12 +96,13 @@
   let AboutButton;
   let logo;
 
-
   MainMenuGameState.create = function() {
-    logo = Game.add.sprite(Game.world.width / 2 - 373, 0, 'logo');
+    logo = Game.add.sprite(Game.world.centerX, 50, 'logo');
+    logo.anchor.setTo(0.5, 0);
+    scaleAsset(logo);
 
     const onStartBtnClick = () => {
-      Game.state.start('Intro', true, false);
+      Game.state.start('GameSwarm', true, false);
     };
     const onAboutBtnClick = () => {
       Game.state.start('About', true, false);
@@ -122,14 +130,16 @@
       window.open('https://github.com/kopylash/algorithmics-project', '_blank');
     };
 
-    UTLogo = Game.add.sprite(Game.world.width - 350, Game.world.height - 60, 'utLogo');
-    UTLogo.scale.setTo(0.25, 0.25);
+    UTLogo = Game.add.sprite(Game.world.width, Game.world.height, 'utLogo');
+    UTLogo.anchor.setTo(1, 1);
+    scaleAsset(UTLogo);
 
-    GithubLogo = Game.add.button(0, Game.world.height - 100, 'githubLogo', onGithubLogoClick, this);
-    GithubLogo.scale.setTo(0.25, 0.25);
+    GithubLogo = Game.add.button(0, Game.world.height, 'githubLogo', onGithubLogoClick, this);
+    GithubLogo.anchor.setTo(0, 1);
+    scaleAsset(GithubLogo);
 
     let title = Game.add.text(Game.world.centerX, 50, 'MTAT.03.238 Advanced Algorithmics project', {
-      font: `${textScaleFactor * 1.15}em PressStart2P`,
+      font: `${TEXT_SCALE_FACTOR * 1.15}em PressStart2P`,
       fill: "white",
       align: 'center',
       wordWrap: true,
@@ -157,7 +167,7 @@
       'Fall 2017';
 
     let text = Game.add.text(Game.world.width / 10, title.y + 50, content, {
-      font: `${textScaleFactor}em PressStart2P`,
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
       fill: "white",
       align: 'left',
       wordWrap: true,
@@ -167,7 +177,7 @@
     text.lineSpacing = 3;
 
     BackButton = Game.add.button(Game.world.centerX, text.height + 100, 'backButton', onBackButtonClick, this);
-    BackButton.scale.setTo(textScaleFactor * 0.35);
+    BackButton.scale.setTo(TEXT_SCALE_FACTOR * 0.35);
     BackButton.anchor.setTo(0.5, 0);
   };
 
@@ -213,7 +223,7 @@
     }
 
     let text = Game.add.text(50, 50, '', {
-      font: `${textScaleFactor}em PressStart2P`,
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
       fill: "white",
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.85
@@ -262,6 +272,7 @@
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
+    scaleAsset(player);
     player.maxHealth = 100;
     player.health = player.maxHealth;
 
@@ -276,8 +287,9 @@
       s.name = 'alien' + s;
       s.body.collideWorldBounds = true;
       s.anchor.set(0.5, 0.5);
+      scaleAsset(s);
       s.body.bounce.setTo(0.8, 0.8);
-      s.body.velocity.setTo(10 + Math.random() * 40, 10 + Math.random() * 40);
+      s.body.velocity.setTo(10 + Math.random() * 40 * VELOCITY_SCALE_FACTOR, 10 + Math.random() * 40 * VELOCITY_SCALE_FACTOR);
       s.pBest = Infinity;
       s.pBestX = s.x;
       s.pBestY = s.y;
@@ -302,13 +314,13 @@
     cursors = Game.input.keyboard.createCursorKeys();
 
     books = Game.add.group();
-    books.scale.setTo(1.2);
     Game.physics.arcade.enable(books);
     books.enableBody = true;
 
     const spawnBook = () => {
       const name = booksToSpawn.pop();
       let b = books.create(Game.world.randomX, Game.math.clamp(Game.world.randomY, 100, Game.world.height - 200), `books${name}`);
+      scaleAsset(b);
       b.name = name;
       b.body.immovable = true;
       b.body.collideWorldBounds = true;
@@ -331,25 +343,25 @@
     Game.physics.arcade.collide(player, books, booksCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 420, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 420 * VELOCITY_SCALE_FACTOR, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
     }
 
     if (cursors.left.isDown) {
-      player.body.velocity.x = -300;
+      player.body.velocity.x = -300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     } else if (cursors.right.isDown) {
-      player.body.velocity.x = 300;
+      player.body.velocity.x = 300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     }
 
     if (cursors.up.isDown) {
-      player.body.velocity.y = -300;
+      player.body.velocity.y = -300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     } else if (cursors.down.isDown) {
-      player.body.velocity.y = 300;
+      player.body.velocity.y = 300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     }
 
@@ -367,7 +379,7 @@
         swarm.gBestY = child.y;
       }
     }, this);
-    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 250), this);
+    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 250 * VELOCITY_SCALE_FACTOR), this);
   };
 
   function updateScore(points) {
@@ -435,7 +447,7 @@
 
   InterludeGameState.create = function() {
     player.body.stop();
-    Game.physics.arcade.moveToXY(player, Game.world.width / 2, Game.world.height, 200);
+    Game.physics.arcade.moveToXY(player, Game.world.width / 2, Game.world.height, 200 * VELOCITY_SCALE_FACTOR);
 
     let letterIndex = 0;
     let letterDelay = 50;
@@ -452,7 +464,7 @@
     content = content.split('');
 
     let text = Game.add.text(Game.world.width * 0.1, Game.world.height / 4, '', {
-      font: `${textScaleFactor}em PressStart2P`,
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
       fill: "white",
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.85
@@ -481,7 +493,7 @@
   const SwarmChasingGameState = new Phaser.State();
 
   SwarmChasingGameState.create = function() {
-    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 370, Game.math.random(-1, 1) * 350), this);
+    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 370, Game.math.random(-1, 1) * 350 * VELOCITY_SCALE_FACTOR), this);
 
     GameStick = GamePad.addStick(0, 0, 100, 'gamepad');
     GameStick.showOnTouch = true;
@@ -492,22 +504,22 @@
     Game.physics.arcade.collide(player, swarm, swarmChasingCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 550, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 550 * VELOCITY_SCALE_FACTOR, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
     }
 
     if (cursors.left.isDown) {
-      player.body.velocity.x = -350;
+      player.body.velocity.x = -350 * VELOCITY_SCALE_FACTOR;
     } else if (cursors.right.isDown) {
-      player.body.velocity.x = 350;
+      player.body.velocity.x = 350 * VELOCITY_SCALE_FACTOR;
     }
 
     if (cursors.up.isDown) {
-      player.body.velocity.y = -350;
+      player.body.velocity.y = -350 * VELOCITY_SCALE_FACTOR;
     } else if (cursors.down.isDown) {
-      player.body.velocity.y = 350;
+      player.body.velocity.y = 350 * VELOCITY_SCALE_FACTOR;
     }
 
     swarm.forEachAlive(child => escapeMovement(child, player), this);
@@ -550,7 +562,7 @@
 
   function escapeMovement(swarmChild, player) {
     if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 150) {
-      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400);
+      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400 * VELOCITY_SCALE_FACTOR);
     }
   }
 
@@ -593,7 +605,7 @@
     healthBar.setPercent(0);
 
     GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
-      font: `${textScaleFactor * 2}em "PressStart2P"`,
+      font: `${TEXT_SCALE_FACTOR * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
@@ -623,7 +635,7 @@
     convertHealthToPoints();
 
     GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Congrats!\n${convertScoreToText(score)}`, {
-      font: `${textScaleFactor * 2}em "PressStart2P"`,
+      font: `${TEXT_SCALE_FACTOR * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
