@@ -18,10 +18,10 @@
     GameStick;
 
   const TEXT_SCALE_FACTOR = window.devicePixelRatio <= 1 ? 2 : window.devicePixelRatio;
-  const VELOCITY_SCALE_FACTOR = window.devicePixelRatio >= 3 ? 2 : 1;
+  const VELOCITY_SCALE_FACTOR = window.devicePixelRatio >= 3 ? 1.75 : 1;
 
   const scaleAsset = (asset, defaultWidth = 720, defaultHeight = 1280) => {
-    if (window.devicePixelRatio > 1) {
+    if (window.devicePixelRatio > 1 && !(/mac/i.test(navigator.platform))) {
       asset.scale.setTo(window.innerWidth * window.devicePixelRatio / defaultWidth, window.innerHeight * window.devicePixelRatio / defaultHeight);
     }
   };
