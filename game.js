@@ -61,6 +61,7 @@
     Game.load.image('logo', 'assets/sprites/logo.png');
     Game.load.image('utLogo', 'assets/sprites/UTlogo.png');
     Game.load.image('githubLogo', 'assets/sprites/github-logo.png');
+    Game.load.spritesheet('partyParrot', 'assets/sprites/parrot-sprite.png', 54, 25);
 
     Game.load.audio('hurt', 'assets/sounds/hurt.wav');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
@@ -88,7 +89,6 @@
   let StartButton;
   let AboutButton;
   let logo;
-
 
   MainMenuGameState.create = function() {
     logo = Game.add.sprite(Game.world.width / 2 - 373, 0, 'logo');
@@ -191,7 +191,7 @@
       "And don't let the baddies to catch you! \n" +
       "\n" +
       "They organized a lazy swarm. \n" +
-      "Baddies don't know where are you. \n" +
+      "Baddies don't know where you are. \n" +
       "But they see the light of knowledge in your heart!\n" +
       "That's why they know how far you are.";
 
@@ -610,6 +610,8 @@
   /************* GameWin ******************/
   const GameWinState = new Phaser.State();
 
+  let PartyParrot;
+
   GameWinState.create = function() {
     ScoreSound = Game.add.audio('score');
     GameWinSound = Game.add.audio('victory');
@@ -635,6 +637,10 @@
 
     RetryButton = Game.add.button(Game.world.centerX, Game.world.height * 0.7, 'retryButton', onRetryBtnClick, this);
     RetryButton.anchor.setTo(0.5);
+    PartyParrot = Game.add.sprite(RetryButton.x, RetryButton.y - RetryButton.height / 2 - 25, 'partyParrot');
+    PartyParrot.anchor.setTo(0.5, 0);
+    PartyParrot.animations.add('partyToDeathMotherfuckers', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 40, true);
+    PartyParrot.animations.play('partyToDeathMotherfuckers');
   };
 
   GameWinState.shutdown = function() {
