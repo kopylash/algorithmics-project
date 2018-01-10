@@ -30,11 +30,9 @@ random number between (0,1). c1, c2 are learning factors. usually c1 = c2 = 2. P
 velocity Vmax. If the sum of accelerations would cause the velocity on that dimension to exceed Vmax, which is a parameter specified by the user.
 Then the velocity on that dimension is limited to Vmax.
 
-### Examples
+[Particle Swarm Optimization Visualization](https://www.youtube.com/watch?v=gkGa6WZpcQg)
 
-[Dynamic change of the target](https://www.youtube.com/watch?v=gkGa6WZpcQg)
-
-## The game
+## The [game](https://kopylash.github.io/algorithmics-project/)
 
 The game tells us the story of professor Jaak Villo. Because of the global laziness, students transformed into baddies. Only Jaak can save the
 situation, but he has to get Ph.D first. Students don't want this to happen so they try to kill professor. The game consists of two parts: 
