@@ -53,7 +53,7 @@ distance to player. The game ends when player has caught all the baddies. Then t
 left and number of baddies caught.
 
 
-The game is playable on different devices with proper scaling. During our development process we have used (Node.js)https://nodejs.org/en/ and [Phaser](https://phaser.io/). 
+The game is playable on different devices with proper scaling. During our development process we have used [Node.js](https://nodejs.org/en/) and [Phaser](https://phaser.io/). 
 
 ## Future direction
 
