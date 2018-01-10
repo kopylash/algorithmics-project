@@ -45,6 +45,8 @@ In the first stage, player needs to collect three books for obtaining of the Ph.
 Player has health bar and when point hits the player he loses health. After collection of all of the books Jaak gets Ph.D and the power to tranform
 baddies back to normal students, starting the next phase of the game.
 
+![Optional Text](../assets/sprites/btn-about.png)
+
 ### Second part
 
 In the second phase of the game player has to catch all of the baddies and register them to the next Algorithmic course. They try to escape by
