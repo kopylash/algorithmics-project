@@ -1,4 +1,4 @@
-![Game](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/logo.png)
+![Game](assets/sprites/logo.png)
 
 # Algorithmics-project	
 
