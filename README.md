@@ -26,6 +26,11 @@ rand () is a random number between (0,1). c1, c2 are learning factors. usually c
 dimension are clamped to a maximum velocity Vmax. If the sum of accelerations would cause the velocity on that dimension to
 exceed Vmax, which is a parameter specified by the user. Then the velocity on that dimension is limited to Vmax.
 
+### Examples
+
+[Dynamic change of the target](https://www.youtube.com/watch?v=gkGa6WZpcQg)
+
+
 ## The game
 
 In order to show the application of PSO, the arcade game was created. The game tells us the story of professor Jaak Villo. 
@@ -48,22 +53,26 @@ distance to player. The game ends when player has caught all the baddies. Then t
 left and number of baddies caught.
 
 
-The game is playable on different devices with proper scaling. During our development process we have used Node.js and Phaser. 
+The game is playable on different devices with proper scaling. During our development process we have used (Node.js)https://nodejs.org/en/ and [Phaser](https://phaser.io/). 
 
 ## Future direction
 
 During development process, we were thinking about some nice features, but due to other priorities we had decided to focus on 
 them later.
-* Adding timer to the game
-  Player has limited time to complete the game. If timer ends, current score is shown. In the case when player wins the game before
-  timer ends, the bonus time is added to the score
+
+### Adding timer to the game
+
+Player has limited time to complete the game. If timer ends, current score is shown. In the case when player wins the game before
+timer ends, the bonus time is added to the score
   
-* Tracking of the global score
-  Every time player plays the game, his score is saved. Then it is possible to see the leaderboard table.
+### Tracking of the global score
+
+Every time player plays the game, his score is saved. Then it is possible to see the leaderboard table.
   
-* Adding skills 
-  In order to bring more fun to the game, the player will be able to use some set of skills, assigned to different buttons. Skills can
-  differ depending on the phase of the game.
+### Adding skills 
+
+In order to bring more fun to the game, the player will be able to use some set of skills, assigned to different buttons. Skills can
+differ depending on the phase of the game.
 
 
 
