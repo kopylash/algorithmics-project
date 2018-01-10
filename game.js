@@ -17,6 +17,15 @@
     GamePad,
     GameStick;
 
+  const TEXT_SCALE_FACTOR = window.devicePixelRatio <= 1 ? 2 : window.devicePixelRatio;
+  const VELOCITY_SCALE_FACTOR = window.devicePixelRatio > 2 ? 1.75 : 1;
+
+  const scaleAsset = (asset, defaultWidth = 720, defaultHeight = 1280) => {
+    if (window.devicePixelRatio > 1 && !(/mac/i.test(navigator.platform))) {
+      asset.scale.setTo(window.innerWidth * window.devicePixelRatio / defaultWidth, window.innerHeight * window.devicePixelRatio / defaultHeight);
+    }
+  };
+
   const Game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'phaser-example', SCENE);
 
   /************* Boot ******************/
@@ -26,7 +35,7 @@
     Game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
     LoadingText = Game.add.text(Game.world.width / 2, Game.world.height / 2, LOADING_TEXT, {
-      font: '32px "PressStart2P"',
+      font: `${TEXT_SCALE_FACTOR * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
@@ -43,6 +52,8 @@
 
   PreloaderGameState.preload = function() {
     Game.load.image('startButton', 'assets/sprites/btn-start.png');
+    Game.load.image('aboutButton', 'assets/sprites/btn-about.png');
+    Game.load.image('backButton', 'assets/sprites/btn-back.png');
     Game.load.image('block', 'assets/sprites/block.png');
     Game.load.atlas('gamepad', 'assets/sprites/arcade-joystick.png', 'assets/sprites/arcade-joystick.json');
     Game.load.image('sky', 'assets/sprites/sky.png');
@@ -54,6 +65,12 @@
     Game.load.image('booksD', 'assets/sprites/booksD.png');
     Game.load.image('jaak', 'assets/sprites/jaak.png');
     Game.load.image('retryButton', 'assets/sprites/btn-retry-black.png');
+    Game.load.image('logo', 'assets/sprites/logo.png');
+    Game.load.image('utLogo', 'assets/sprites/ut-logo.png');
+    Game.load.image('githubLogo', 'assets/sprites/github-logo.png');
+    Game.load.spritesheet('partyParrot', 'assets/sprites/parrot-sprite.png', 54, 25);
+    Game.load.image('helpButton', 'assets/sprites/btn-help.png');
+    Game.load.image('bigBaddie', 'assets/sprites/baddie32.png');
 
     Game.load.audio('hurt', 'assets/sounds/hurt.wav');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
@@ -79,14 +96,92 @@
   const MainMenuGameState = new Phaser.State();
 
   let StartButton;
+  let AboutButton;
+  let logo;
 
   MainMenuGameState.create = function() {
+    logo = Game.add.sprite(Game.world.centerX, 50, 'logo');
+    logo.anchor.setTo(0.5, 0);
+    scaleAsset(logo);
+
     const onStartBtnClick = () => {
-      StartButton.inputEnabled = false;
-      Game.state.start('GameSwarm', false, false);
+      Game.state.start('Intro', true, false);
     };
-    StartButton = Game.add.button(Game.world.centerX - 88, Game.world.centerY - 38, 'startButton', onStartBtnClick, this);
-    StartButton.scale.setTo(0.5, 0.5);
+    const onAboutBtnClick = () => {
+      Game.state.start('About', true, false);
+    };
+
+    StartButton = Game.add.button(Game.world.centerX, Game.world.centerY, 'startButton', onStartBtnClick, this);
+    StartButton.anchor.setTo(0.5);
+    AboutButton = Game.add.button(StartButton.x, StartButton.y + StartButton.height + 10, 'aboutButton', onAboutBtnClick, this);
+    AboutButton.anchor.setTo(0.5);
+  };
+
+  /************* About ****************/
+  const AboutGameState = new Phaser.State();
+
+  let BackButton;
+  let UTLogo;
+  let GithubLogo;
+
+  AboutGameState.create = function() {
+    const onBackButtonClick = () => {
+      Game.state.start('MainMenu', true, false);
+    };
+
+    const onGithubLogoClick = () => {
+      window.open('https://github.com/kopylash/algorithmics-project', '_blank');
+    };
+
+    UTLogo = Game.add.sprite(Game.world.width, Game.world.height, 'utLogo');
+    UTLogo.anchor.setTo(1, 1);
+    scaleAsset(UTLogo);
+
+    GithubLogo = Game.add.button(0, Game.world.height, 'githubLogo', onGithubLogoClick, this);
+    GithubLogo.anchor.setTo(0, 1);
+    scaleAsset(GithubLogo);
+
+    let title = Game.add.text(Game.world.centerX, 50, 'MTAT.03.238 Advanced Algorithmics project', {
+      font: `${TEXT_SCALE_FACTOR * 1.15}em PressStart2P`,
+      fill: "white",
+      align: 'center',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    title.anchor.setTo(0.5, 0.5);
+
+    const content = '\nThis is the last project in our master studies. ' +
+      'We used our chance to make something awesome. ' +
+      'While choosing topic we decided to make a game ' +
+      'about our biggest professor - Jaak Vilo. ' +
+      'Credits to him! Thanks for really cool ' +
+      'lectures and sorry that we didn`t attend any of them :) ' +
+      '\n' +
+      '\n' +
+      'Big thanks to our TA Dima Fishman for candies and being Dima Fishman! ' +
+      '\n' +
+      '\n' +
+      'With love, creators: Vladyslav Kopylash, Artem Zaitsev, Volodymyr Leno. \n' +
+      '\n' +
+      'PS: Professor, we hope you have a good sense of humor and we won`t be exmatriculated tomorrow! ' +
+      '\n' +
+      '\n' +
+      'Fall 2017';
+
+    let text = Game.add.text(Game.world.width / 10, title.y + 50, content, {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    text.lineSpacing = 3;
+
+    BackButton = Game.add.button(Game.world.centerX, text.height + 100, 'backButton', onBackButtonClick, this);
+    BackButton.scale.setTo(TEXT_SCALE_FACTOR * 0.35);
+    BackButton.anchor.setTo(0.5, 0);
   };
 
   /************* Intro ****************/
@@ -109,7 +204,7 @@
       "And don't let the baddies to catch you! \n" +
       "\n" +
       "They organized a lazy swarm. \n" +
-      "Baddies don't know where are you. \n" +
+      "Baddies don't know where you are. \n" +
       "But they see the light of knowledge in your heart!\n" +
       "That's why they know how far you are.";
 
@@ -131,11 +226,13 @@
     }
 
     let text = Game.add.text(50, 50, '', {
-      font: '15px PressStart2P',
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
       fill: "white",
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.9
+      wordWrapWidth: Game.world.width * 0.85
     });
+
+    text.lineSpacing = 5;
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
@@ -144,12 +241,63 @@
       if (letterIndex === content.length) {
         setTimeout(() => {
           Game.state.start("GameSwarm", false, false)
-        }, 4000);
+        }, 2000);
       }
 
     };
 
     Game.time.events.repeat(letterDelay, content.length, nextLetter, this);
+  };
+
+  /************* Help ******************/
+  const HelpGameState = new Phaser.State();
+
+  HelpGameState.create = function() {
+    let HelpBackButton;
+
+    const textConfig = {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    };
+
+    let firstRow = Game.add.text(Game.world.width / 10, 50, '1st PHASE:\n', textConfig);
+
+    let secondRow = Game.add.text(Game.world.width / 10, firstRow.y + firstRow.height + 10, 'escape from baddies', textConfig);
+
+    let baddie1 = Game.add.sprite(secondRow.x + secondRow.width + 10, secondRow.y + secondRow.height - secondRow.height / 3, 'bigBaddie');
+    baddie1.anchor.setTo(0, 1);
+    scaleAsset(baddie1);
+
+    let thirdRow = Game.add.text(Game.world.width / 10, secondRow.y + secondRow.height + 10, '\nuse arrows ←↑→\n', textConfig);
+
+    let fourthRow = Game.add.text(Game.world.width / 10, thirdRow.y + thirdRow.height + 10, 'collect 3 books', textConfig);
+
+    let bookP = Game.add.sprite(fourthRow.x + fourthRow.width + 10, fourthRow.y + fourthRow.height - fourthRow.height / 3, 'booksP');
+    bookP.anchor.setTo(0, 1);
+    scaleAsset(bookP);
+    let bookH = Game.add.sprite(bookP.x + bookP.width, fourthRow.y + fourthRow.height - fourthRow.height / 3, 'booksH');
+    bookH.anchor.setTo(0, 1);
+    scaleAsset(bookH);
+    let bookD = Game.add.sprite(bookH.x + bookH.width, fourthRow.y + fourthRow.height - fourthRow.height / 3, 'booksD');
+    bookD.anchor.setTo(0, 1);
+    scaleAsset(bookD);
+
+    let fifthRow = Game.add.text(Game.world.width / 10, fourthRow.y + fourthRow.height + 10, '\n\n2nd PHASE:\n', textConfig);
+
+    let sixRow = Game.add.text(Game.world.width / 10, fifthRow.y + fifthRow.height + 10, 'catch all baddies', textConfig);
+
+    let baddie2 = Game.add.sprite(sixRow.x + sixRow.width + 10, sixRow.y + sixRow.height - sixRow.height / 3, 'bigBaddie');
+    baddie2.anchor.setTo(0, 1);
+    scaleAsset(baddie2);
+
+    let seventhRow = Game.add.text(Game.world.width / 10, sixRow.y + sixRow.height + 10, '\nPS: corners are cool.', textConfig);
+
+    HelpBackButton = Game.add.button(Game.world.centerX, Game.world.centerY + 100, 'backButton', onRetryBtnClick, this);
+    HelpBackButton.scale.setTo(TEXT_SCALE_FACTOR * 0.35);
+    HelpBackButton.anchor.setTo(0.5, 0.5);
   };
 
   /************* GameSwarm ******************/
@@ -178,6 +326,7 @@
     Game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.anchor.set(0.5, 0.5);
+    scaleAsset(player);
     player.maxHealth = 100;
     player.health = player.maxHealth;
 
@@ -192,8 +341,9 @@
       s.name = 'alien' + s;
       s.body.collideWorldBounds = true;
       s.anchor.set(0.5, 0.5);
+      scaleAsset(s);
       s.body.bounce.setTo(0.8, 0.8);
-      s.body.velocity.setTo(10 + Math.random() * 40, 10 + Math.random() * 40);
+      s.body.velocity.setTo(10 + Math.random() * 40 * VELOCITY_SCALE_FACTOR, 10 + Math.random() * 40 * VELOCITY_SCALE_FACTOR);
       s.pBest = Infinity;
       s.pBestX = s.x;
       s.pBestY = s.y;
@@ -218,13 +368,13 @@
     cursors = Game.input.keyboard.createCursorKeys();
 
     books = Game.add.group();
-    books.scale.setTo(1.2);
     Game.physics.arcade.enable(books);
     books.enableBody = true;
 
     const spawnBook = () => {
       const name = booksToSpawn.pop();
       let b = books.create(Game.world.randomX, Game.math.clamp(Game.world.randomY, 100, Game.world.height - 200), `books${name}`);
+      scaleAsset(b);
       b.name = name;
       b.body.immovable = true;
       b.body.collideWorldBounds = true;
@@ -233,7 +383,7 @@
       bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
     };
 
-    Game.time.events.repeat(Phaser.Timer.SECOND * 1, 3, spawnBook, this);
+    Game.time.events.repeat(Phaser.Timer.SECOND * 6, 3, spawnBook, this);
 
     BookPickupSound = Game.add.audio('coin');
     PowerupSound = Game.add.audio('powerup');
@@ -247,25 +397,25 @@
     Game.physics.arcade.collide(player, books, booksCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 250, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 420 * VELOCITY_SCALE_FACTOR, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
     }
 
     if (cursors.left.isDown) {
-      player.body.velocity.x = -250;
+      player.body.velocity.x = -300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     } else if (cursors.right.isDown) {
-      player.body.velocity.x = 250;
+      player.body.velocity.x = 300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     }
 
     if (cursors.up.isDown) {
-      player.body.velocity.y = -250;
+      player.body.velocity.y = -300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     } else if (cursors.down.isDown) {
-      player.body.velocity.y = 250;
+      player.body.velocity.y = 300 * VELOCITY_SCALE_FACTOR;
       resetPSO(this);
     }
 
@@ -283,7 +433,7 @@
         swarm.gBestY = child.y;
       }
     }, this);
-    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 130), this);
+    swarm.forEachAlive(child => psoMovement(child, swarm.gBestX, swarm.gBestY, 250 * VELOCITY_SCALE_FACTOR), this);
   };
 
   function updateScore(points) {
@@ -294,7 +444,7 @@
   function swarmEscapeCollisionHandler(player, swarmChild) {
     HurtSound.play();
 
-    let tween = Game.add.tween(player).to({alpha: 0.5}, 25, Phaser.Easing.Linear.None, true);
+    let tween = Game.add.tween(player).to({alpha: 0.5}, 60, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(() => player.alpha = 1, this);
 
     player.damage(5);
@@ -351,7 +501,7 @@
 
   InterludeGameState.create = function() {
     player.body.stop();
-    Game.physics.arcade.moveToXY(player, Game.world.width / 2, Game.world.height, 200);
+    Game.physics.arcade.moveToXY(player, Game.world.width / 2, Game.world.height, 200 * VELOCITY_SCALE_FACTOR);
 
     let letterIndex = 0;
     let letterDelay = 50;
@@ -368,11 +518,13 @@
     content = content.split('');
 
     let text = Game.add.text(Game.world.width * 0.1, Game.world.height / 4, '', {
-      font: '15px PressStart2P',
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
       fill: "white",
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.8
+      wordWrapWidth: Game.world.width * 0.85
     });
+
+    text.lineSpacing = 5;
 
     const nextLetter = () => {
       text.text = text.text.concat(content[letterIndex]);
@@ -382,7 +534,7 @@
         setTimeout(() => {
           Game.state.start("SwarmChasing", false, false);
           text.kill();
-        }, 4000);
+        }, 3000);
       }
 
     };
@@ -395,7 +547,7 @@
   const SwarmChasingGameState = new Phaser.State();
 
   SwarmChasingGameState.create = function() {
-    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 350, Game.math.random(-1, 1) * 350), this);
+    swarm.forEachAlive(child => child.body.velocity.setTo(Game.math.random(-1, 1) * 370, Game.math.random(-1, 1) * 350 * VELOCITY_SCALE_FACTOR), this);
 
     GameStick = GamePad.addStick(0, 0, 100, 'gamepad');
     GameStick.showOnTouch = true;
@@ -406,22 +558,22 @@
     Game.physics.arcade.collide(player, swarm, swarmChasingCollisionHandler);
 
     if (GameStick.isDown) {
-      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 350, player.body.velocity);
+      Game.physics.arcade.velocityFromRotation(GameStick.rotation, GameStick.force * 550 * VELOCITY_SCALE_FACTOR, player.body.velocity);
       resetPSO(this);
     } else {
       player.body.velocity.set(0);
     }
 
     if (cursors.left.isDown) {
-      player.body.velocity.x = -350;
+      player.body.velocity.x = -350 * VELOCITY_SCALE_FACTOR;
     } else if (cursors.right.isDown) {
-      player.body.velocity.x = 350;
+      player.body.velocity.x = 350 * VELOCITY_SCALE_FACTOR;
     }
 
     if (cursors.up.isDown) {
-      player.body.velocity.y = -350;
+      player.body.velocity.y = -350 * VELOCITY_SCALE_FACTOR;
     } else if (cursors.down.isDown) {
-      player.body.velocity.y = 350;
+      player.body.velocity.y = 350 * VELOCITY_SCALE_FACTOR;
     }
 
     swarm.forEachAlive(child => escapeMovement(child, player), this);
@@ -463,8 +615,8 @@
   }
 
   function escapeMovement(swarmChild, player) {
-    if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 100) {
-      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 350);
+    if (Game.physics.arcade.distanceBetween(player, swarmChild, false, true) < 150) {
+      Game.physics.arcade.moveToObject(swarmChild, Game.physics.arcade.farthest(player, generateNearbyPoints(swarmChild)), 400 * VELOCITY_SCALE_FACTOR);
     }
   }
 
@@ -479,15 +631,15 @@
   let RetryButton;
 
   function convertScoreToText(score) {
-    if (score >= 370) {
+    if (score >= 360) {
       return 'Mr. Vilo, is this you?';
     }
 
-    if (score > 340) {
+    if (score > 320) {
       return `Wow, that's Ph.D. level!`;
     }
 
-    if (score > 290) {
+    if (score > 280) {
       return 'You are Master student.';
     }
 
@@ -506,23 +658,36 @@
 
     healthBar.setPercent(0);
 
-    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
-      font: '32px "PressStart2P"',
+    const onHelpBtnClick = () => {
+      Game.state.start('Help', true, false);
+    };
+
+    GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
+      font: `${TEXT_SCALE_FACTOR * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
       align: 'center',
       wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.7
+      wordWrapWidth: Game.world.width * 0.85
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
-    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
-    RetryButton.scale.setTo(0.5, 0.5);
+    RetryButton = Game.add.button(Game.world.centerX, Game.world.height * 0.7, 'retryButton', onRetryBtnClick, this);
+    RetryButton.anchor.setTo(0.5);
+    HelpButton = Game.add.button(RetryButton.x, RetryButton.y + RetryButton.height, 'helpButton', onHelpBtnClick, this);
+    HelpButton.anchor.setTo(0.5);
+  };
+
+  GameOverState.shutdown = function() {
+    GameOverSound.stop();
   };
 
   /************* GameWin ******************/
   const GameWinState = new Phaser.State();
+
+  let PartyParrot;
+  let HelpButton;
 
   GameWinState.create = function() {
     ScoreSound = Game.add.audio('score');
@@ -536,17 +701,23 @@
     };
     convertHealthToPoints();
 
-    GameEndText = Game.add.text(Game.world.width / 2, Game.world.height / 2, `Congrats!\n${convertScoreToText(score)}`, {
-      font: '32px "PressStart2P"',
+    GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Congrats!\n${convertScoreToText(score)}`, {
+      font: `${TEXT_SCALE_FACTOR * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
       stroke: '#000000',
       strokeThickness: 3,
-      align: 'center'
+      align: 'center',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
     });
     GameEndText.anchor.setTo(0.5, 0.5);
 
-    RetryButton = Game.add.button(Game.world.centerX - 100, Game.world.height * 0.65, 'retryButton', onRetryBtnClick, this);
-    RetryButton.scale.setTo(0.5, 0.5);
+    RetryButton = Game.add.button(Game.world.centerX, Game.world.height * 0.7, 'retryButton', onRetryBtnClick, this);
+    RetryButton.anchor.setTo(0.5);
+    PartyParrot = Game.add.sprite(RetryButton.x, RetryButton.y - RetryButton.height / 2 - 25, 'partyParrot');
+    PartyParrot.anchor.setTo(0.5, 0);
+    PartyParrot.animations.add('partyToDeathMotherfuckers', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 40, true);
+    PartyParrot.animations.play('partyToDeathMotherfuckers');
   };
 
   GameWinState.shutdown = function() {
@@ -558,6 +729,8 @@
   Game.state.add('Boot', BootGameState, false);
   Game.state.add('Preloader', PreloaderGameState, false);
   Game.state.add('MainMenu', MainMenuGameState, false);
+  Game.state.add('About', AboutGameState, false);
+  Game.state.add('Help', HelpGameState, false);
   Game.state.add('Intro', IntroGameState, false);
   Game.state.add('Interlude', InterludeGameState, false);
   Game.state.add('GameSwarm', GameSwarmState, false);
