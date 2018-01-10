@@ -1,7 +1,7 @@
 # The Mysterious Jaak	
 
 HTML5 arcade game showing Particle Swarm Optimization algorithm in practice. Built with [Phaser](https://phaser.io/) for
-"Advanced algorithmics" course project at [University of Tartu](https://www.cs.ut.ee/en).
+[MTAT.03.238 Advanced Algorithmics](https://courses.cs.ut.ee/2017/algorithmics/fall) course project at [University of Tartu](https://www.cs.ut.ee/en).
 
 ## Getting started
 
