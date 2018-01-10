@@ -7,7 +7,7 @@ Advanced algorithmics course project. University of Tartu 2017
 **Authors**: Artem Zaitsev, Vladyslav Kopylash, Volodymyr Leno
 
 The project shows the application of Particle Swarm Optimization algorithm in practice. For this, the arcade game was implemented using 
-[Node.js](https://nodejs.org/en/) and [Phaser](https://phaser.io/). 
+[Node.js](https://nodejs.org/en/) and [Phaser](https://phaser.io/). The game is playable on different devices with proper scaling.
 
 ## The algorithm
 
@@ -34,7 +34,7 @@ Then the velocity on that dimension is limited to Vmax.
 
 ## [The game](https://kopylash.github.io/algorithmics-project/)
 
-![Game](https://github.com/kopylash/algorithmics-project/blob/phaser/assets/sprites/logo.png)
+![Game](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/logo.png)
 
 The game tells us the story of professor Jaak Villo. Because of the global laziness, students transformed into baddies. Only Jaak can save the
 situation, but he has to get Ph.D first. Students don't want this to happen so they try to kill professor. The game consists of two parts: 1) getting of
@@ -47,13 +47,15 @@ In the first stage, player needs to collect three books for obtaining of the Ph.
 Player has health bar and when point hits the player he loses health. After collection of all of the books Jaak gets Ph.D and the power to tranform
 baddies back to normal students, starting the next phase of the game.
 
+![First mode](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/escape_mode.png)
+
 ### Second part
 
 In the second phase of the game player has to catch all of the baddies and register them to the next Algorithmic course. They try to escape by
 following the maximum distance greedy algorithm. The main idea is to choose the direction which maximize the distance to player. The game ends
 when player has caught all the baddies. Then the final score is shown, based on the health left and number of baddies caught.
 
-The game is playable on different devices with proper scaling.
+![Second mode](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/escape_mode.png)
 
 ## Future direction
 
