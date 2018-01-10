@@ -255,41 +255,25 @@
   HelpGameState.create = function() {
     let HelpBackButton;
 
-    let firstRow = Game.add.text(Game.world.width / 10, 50, '1st PHASE:\n', {
+    const textConfig = {
       font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
       fill: "white",
       align: 'left',
       wordWrap: true,
       wordWrapWidth: Game.world.width * 0.85
-    });
+    };
 
-    let secondRow = Game.add.text(Game.world.width / 10, firstRow.y + firstRow.height + 10, 'escape from baddies', {
-      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
-      fill: "white",
-      align: 'left',
-      wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.85
-    });
+    let firstRow = Game.add.text(Game.world.width / 10, 50, '1st PHASE:\n', textConfig);
+
+    let secondRow = Game.add.text(Game.world.width / 10, firstRow.y + firstRow.height + 10, 'escape from baddies', textConfig);
 
     let baddie1 = Game.add.sprite(secondRow.x + secondRow.width + 10, secondRow.y + secondRow.height - secondRow.height / 3, 'bigBaddie');
     baddie1.anchor.setTo(0, 1);
     scaleAsset(baddie1);
 
-    let thirdRow = Game.add.text(Game.world.width / 10, secondRow.y + secondRow.height + 10, '\nuse arrows ←↑→\n', {
-      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
-      fill: "white",
-      align: 'left',
-      wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.85
-    });
+    let thirdRow = Game.add.text(Game.world.width / 10, secondRow.y + secondRow.height + 10, '\nuse arrows ←↑→\n', textConfig);
 
-    let fourthRow = Game.add.text(Game.world.width / 10, thirdRow.y + thirdRow.height + 10, 'collect 3 books', {
-      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
-      fill: "white",
-      align: 'left',
-      wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.85
-    });
+    let fourthRow = Game.add.text(Game.world.width / 10, thirdRow.y + thirdRow.height + 10, 'collect 3 books', textConfig);
 
     let bookP = Game.add.sprite(fourthRow.x + fourthRow.width + 10, fourthRow.y + fourthRow.height - fourthRow.height / 3, 'booksP');
     bookP.anchor.setTo(0, 1);
@@ -301,33 +285,15 @@
     bookD.anchor.setTo(0, 1);
     scaleAsset(bookD);
 
-    let fifthRow = Game.add.text(Game.world.width / 10, fourthRow.y + fourthRow.height + 10, '\n\n2nd PHASE:\n', {
-      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
-      fill: "white",
-      align: 'left',
-      wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.85
-    });
+    let fifthRow = Game.add.text(Game.world.width / 10, fourthRow.y + fourthRow.height + 10, '\n\n2nd PHASE:\n', textConfig);
 
-    let sixRow = Game.add.text(Game.world.width / 10, fifthRow.y + fifthRow.height + 10, 'catch all baddies', {
-      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
-      fill: "white",
-      align: 'left',
-      wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.85
-    });
+    let sixRow = Game.add.text(Game.world.width / 10, fifthRow.y + fifthRow.height + 10, 'catch all baddies', textConfig);
 
     let baddie2 = Game.add.sprite(sixRow.x + sixRow.width + 10, sixRow.y + sixRow.height - sixRow.height / 3, 'bigBaddie');
     baddie2.anchor.setTo(0, 1);
     scaleAsset(baddie2);
 
-    let seventhRow = Game.add.text(Game.world.width / 10, sixRow.y + sixRow.height + 10, '\nPS: corners are cool.', {
-      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
-      fill: "white",
-      align: 'left',
-      wordWrap: true,
-      wordWrapWidth: Game.world.width * 0.85
-    });
+    let seventhRow = Game.add.text(Game.world.width / 10, sixRow.y + sixRow.height + 10, '\nPS: corners are cool.', textConfig);
 
     HelpBackButton = Game.add.button(Game.world.centerX, Game.world.centerY + 100, 'backButton', onRetryBtnClick, this);
     HelpBackButton.scale.setTo(TEXT_SCALE_FACTOR * 0.35);
