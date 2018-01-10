@@ -1,11 +1,11 @@
-# Algorithmics-project	
-
 ![Game](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/logo.png)
+
+# Algorithmics-project	
 
 Advanced algorithmics course project. University of Tartu 2017
 
 The project shows the application of Particle Swarm Optimization algorithm in practice. For this, the arcade game was implemented using 
-[Node.js](https://nodejs.org/en/) and [Phaser](https://phaser.io/). The game is playable on different devices with proper scaling.
+[Phaser](https://phaser.io/). The game is playable on different devices with proper scaling.
 
 ## The algorithm
 
