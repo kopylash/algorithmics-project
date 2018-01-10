@@ -55,7 +55,7 @@ In the second phase of the game player has to catch all of the baddies and regis
 following the maximum distance greedy algorithm. The main idea is to choose the direction which maximize the distance to player. The game ends
 when player has caught all the baddies. Then the final score is shown, based on the health left and number of baddies caught.
 
-![Second mode](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/escape_mode.png)
+![Second mode](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/chasing_mode.png)
 
 ## Future direction
 
