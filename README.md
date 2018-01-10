@@ -32,11 +32,11 @@ Then the velocity on that dimension is limited to Vmax.
 
 [Particle Swarm Optimization Visualization](https://www.youtube.com/watch?v=gkGa6WZpcQg)
 
-## The [game](https://kopylash.github.io/algorithmics-project/)
+## [The game](https://kopylash.github.io/algorithmics-project/)
 
 The game tells us the story of professor Jaak Villo. Because of the global laziness, students transformed into baddies. Only Jaak can save the
-situation, but he has to get Ph.D first. Students don't want this to happen so they try to kill professor. The game consists of two parts: 
-1) getting of the Ph.D; 2) saving of the world.
+situation, but he has to get Ph.D first. Students don't want this to happen so they try to kill professor. The game consists of two parts: 1) getting of
+the Ph.D; 2) saving of the world.
 
 ### First part
 
