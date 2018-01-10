@@ -43,7 +43,7 @@ In the first stage, player needs to collect three books for obtaining of the Ph.
 Player has health bar and when point hits the player he loses health. After collection of all of the books Jaak gets Ph.D and the power to tranform
 baddies back to normal students, starting the next phase of the game.
 
-![First mode](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/escape_mode.png)
+![First mode](assets/sprites/escape_mode.png)
 
 ### Second part
 
@@ -51,7 +51,7 @@ In the second phase of the game player has to catch all of the baddies and regis
 following the maximum distance greedy algorithm. The main idea is to choose the direction which maximize the distance to player. The game ends
 when player has caught all the baddies. Then the final score is shown, based on the health left and number of baddies caught.
 
-![Second mode](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/chasing_mode.png)
+![Second mode](assets/sprites/chasing_mode.png)
 
 ## Future direction
 
