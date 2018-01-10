@@ -37,20 +37,33 @@ Then the velocity on that dimension is limited to `Vmax`.
 
 ## Game
 
-![Game](assets/sprites/logo-black.png)
+![Game](assets/img/logo-black.png)
 
 The game tells us the story of young Jaak. Because of the global laziness, students transformed into baddies. 
 Only Jaak can save the situation, but he has to get the Ph.D first.
 Students don't want this to happen so they are trying to catch him (using Particle Swarm Optimization) and make Jaak lazy. 
 The game consists of two phases: getting of the Ph.D and saving of the world.
 
-![First mode](assets/sprites/escape_mode.png)
+![First mode](assets/img/escape_mode.png)
 *PSO in action*
 
 
-![Second mode](assets/sprites/chasing_mode.png)
+![Second mode](assets/img/chasing_mode.png)
 *Baddies escape following the maximum distance greedy algorithm*
 
 ## Credits
+
+A lot of assets taken from different resources related to game development.
+
+* Icons made by [Freepik](https://www.flaticon.com/authors/freepik) from www.flaticon.com
+* Icons made by [yoman5674](http://piq.codeus.net/u/yoman5647) from www.piq.codeus.net
+* Sprites taken from [Phaser examples](https://phaser.io/examples)
+* Sounds from [The Mushroom Kingdom](http://themushroomkingdom.net/media/smb/wav)
+* Victory sound from [OpenGameArt.Org](https://opengameart.org/content/8-bit-victory-loop)
+* [PressStart2P](http://www.fontspace.com/codeman38/press-start-2p) and [Super Mario Brothers](http://www.fontspace.com/the-liquid-plumber/super-mario-brothers) fonts from www.fontspace.com
+
+Thanks for inspirations to [Cult of the Party Parrot]([http://cultofthepartyparrot.com/), [Sabaton](https://www.sabaton.net/) and sleepless nights.
+
+![Univerity of Tartu logo](assets/img/ut-logo-blue.png)
 
 
