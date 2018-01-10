@@ -62,7 +62,8 @@ A lot of assets taken from different resources related to game development.
 * Victory sound from [OpenGameArt.Org](https://opengameart.org/content/8-bit-victory-loop)
 * [PressStart2P](http://www.fontspace.com/codeman38/press-start-2p) and [Super Mario Brothers](http://www.fontspace.com/the-liquid-plumber/super-mario-brothers) fonts from www.fontspace.com
 
-Thanks for inspirations to [Cult of the Party Parrot]([http://cultofthepartyparrot.com/), [Sabaton](https://www.sabaton.net/) and sleepless nights.
+Thanks for inspirations to [Cult of the Party Parrot](http://cultofthepartyparrot.com/), [Sabaton](https://www.sabaton.net/) and sleepless nights.
+
 
 ![Univerity of Tartu logo](assets/img/ut-logo-blue.png)
 
