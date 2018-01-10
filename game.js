@@ -18,7 +18,7 @@
     GameStick;
 
   const TEXT_SCALE_FACTOR = window.devicePixelRatio <= 1 ? 2 : window.devicePixelRatio;
-  const VELOCITY_SCALE_FACTOR = window.devicePixelRatio >= 3 ? 1.75 : 1;
+  const VELOCITY_SCALE_FACTOR = window.devicePixelRatio > 2 ? 1.75 : 1;
 
   const scaleAsset = (asset, defaultWidth = 720, defaultHeight = 1280) => {
     if (window.devicePixelRatio > 1 && !(/mac/i.test(navigator.platform))) {
@@ -618,6 +618,10 @@
 
     RetryButton = Game.add.button(Game.world.centerX, Game.world.height * 0.7, 'retryButton', onRetryBtnClick, this);
     RetryButton.anchor.setTo(0.5);
+  };
+
+  GameOverState.shutdown = function() {
+    GameOverSound.stop();
   };
 
   /************* GameWin ******************/
