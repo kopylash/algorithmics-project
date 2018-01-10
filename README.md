@@ -1,10 +1,8 @@
 # Algorithmics-project	
 
+![Game](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/logo.png)
+
 Advanced algorithmics course project. University of Tartu 2017
-
-**Title:** "Particle swarm optimization in games"
-
-**Authors**: Artem Zaitsev, Vladyslav Kopylash, Volodymyr Leno
 
 The project shows the application of Particle Swarm Optimization algorithm in practice. For this, the arcade game was implemented using 
 [Node.js](https://nodejs.org/en/) and [Phaser](https://phaser.io/). The game is playable on different devices with proper scaling.
@@ -32,9 +30,7 @@ Then the velocity on that dimension is limited to Vmax.
 
 [Particle Swarm Optimization Visualization](https://www.youtube.com/watch?v=gkGa6WZpcQg)
 
-## [The game](https://kopylash.github.io/algorithmics-project/)
-
-![Game](https://github.com/kopylash/algorithmics-project/blob/readme/assets/sprites/logo.png)
+## The game
 
 The game tells us the story of professor Jaak Villo. Because of the global laziness, students transformed into baddies. Only Jaak can save the
 situation, but he has to get Ph.D first. Students don't want this to happen so they try to kill professor. The game consists of two parts: 1) getting of
