@@ -34,6 +34,8 @@ Then the velocity on that dimension is limited to Vmax.
 
 ## [The game](https://kopylash.github.io/algorithmics-project/)
 
+![Game](https://github.com/kopylash/algorithmics-project/blob/phaser/assets/sprites/logo.png)
+
 The game tells us the story of professor Jaak Villo. Because of the global laziness, students transformed into baddies. Only Jaak can save the
 situation, but he has to get Ph.D first. Students don't want this to happen so they try to kill professor. The game consists of two parts: 1) getting of
 the Ph.D; 2) saving of the world.
@@ -44,8 +46,6 @@ In the first stage, player needs to collect three books for obtaining of the Ph.
 (P, H and D respectively) and will spawn randomly after certain amount of time passed. Meanwhile, baddies try to catch professor, using the PSO.
 Player has health bar and when point hits the player he loses health. After collection of all of the books Jaak gets Ph.D and the power to tranform
 baddies back to normal students, starting the next phase of the game.
-
-![Optional Text](../assets/sprites/btn-about.png)
 
 ### Second part
 
