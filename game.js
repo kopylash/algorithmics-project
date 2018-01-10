@@ -69,6 +69,8 @@
     Game.load.image('utLogo', 'assets/sprites/ut-logo.png');
     Game.load.image('githubLogo', 'assets/sprites/github-logo.png');
     Game.load.spritesheet('partyParrot', 'assets/sprites/parrot-sprite.png', 54, 25);
+    Game.load.image('helpButton', 'assets/sprites/btn-help.png');
+    Game.load.image('bigBaddie', 'assets/sprites/baddie32.png');
 
     Game.load.audio('hurt', 'assets/sounds/hurt.wav');
     Game.load.audio('coin', 'assets/sounds/coin.wav');
@@ -103,7 +105,7 @@
     scaleAsset(logo);
 
     const onStartBtnClick = () => {
-      Game.state.start('GameSwarm', true, false);
+      Game.state.start('Intro', true, false);
     };
     const onAboutBtnClick = () => {
       Game.state.start('About', true, false);
@@ -154,7 +156,7 @@
       'While choosing topic we decided to make a game ' +
       'about our biggest professor - Jaak Vilo. ' +
       'Credits to him! Thanks for really cool ' +
-      'lectures and sorry that we did`t attend any of them :) ' +
+      'lectures and sorry that we didn`t attend any of them :) ' +
       '\n' +
       '\n' +
       'Big thanks to our TA Dima Fishman for candies and being Dima Fishman! ' +
@@ -247,6 +249,91 @@
     Game.time.events.repeat(letterDelay, content.length, nextLetter, this);
   };
 
+  /************* Help ******************/
+  const HelpGameState = new Phaser.State();
+
+  HelpGameState.create = function() {
+    let HelpBackButton;
+
+    let firstRow = Game.add.text(Game.world.width / 10, 50, '1st PHASE:\n', {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    let secondRow = Game.add.text(Game.world.width / 10, firstRow.y + firstRow.height + 10, 'escape from baddies', {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    let baddie1 = Game.add.sprite(secondRow.x + secondRow.width + 10, secondRow.y + secondRow.height - secondRow.height / 3, 'bigBaddie');
+    baddie1.anchor.setTo(0, 1);
+    scaleAsset(baddie1);
+
+    let thirdRow = Game.add.text(Game.world.width / 10, secondRow.y + secondRow.height + 10, '\nuse arrows ←↑→\n', {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    let fourthRow = Game.add.text(Game.world.width / 10, thirdRow.y + thirdRow.height + 10, 'collect 3 books', {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    let bookP = Game.add.sprite(fourthRow.x + fourthRow.width + 10, fourthRow.y + fourthRow.height - fourthRow.height / 3, 'booksP');
+    bookP.anchor.setTo(0, 1);
+    scaleAsset(bookP);
+    let bookH = Game.add.sprite(bookP.x + bookP.width, fourthRow.y + fourthRow.height - fourthRow.height / 3, 'booksH');
+    bookH.anchor.setTo(0, 1);
+    scaleAsset(bookH);
+    let bookD = Game.add.sprite(bookH.x + bookH.width, fourthRow.y + fourthRow.height - fourthRow.height / 3, 'booksD');
+    bookD.anchor.setTo(0, 1);
+    scaleAsset(bookD);
+
+    let fifthRow = Game.add.text(Game.world.width / 10, fourthRow.y + fourthRow.height + 10, '\n\n2nd PHASE:\n', {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    let sixRow = Game.add.text(Game.world.width / 10, fifthRow.y + fifthRow.height + 10, 'catch all baddies', {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    let baddie2 = Game.add.sprite(sixRow.x + sixRow.width + 10, sixRow.y + sixRow.height - sixRow.height / 3, 'bigBaddie');
+    baddie2.anchor.setTo(0, 1);
+    scaleAsset(baddie2);
+
+    let seventhRow = Game.add.text(Game.world.width / 10, sixRow.y + sixRow.height + 10, '\nPS: corners are cool.', {
+      font: `${TEXT_SCALE_FACTOR}em PressStart2P`,
+      fill: "white",
+      align: 'left',
+      wordWrap: true,
+      wordWrapWidth: Game.world.width * 0.85
+    });
+
+    HelpBackButton = Game.add.button(Game.world.centerX, Game.world.centerY + 100, 'backButton', onRetryBtnClick, this);
+    HelpBackButton.scale.setTo(TEXT_SCALE_FACTOR * 0.35);
+    HelpBackButton.anchor.setTo(0.5, 0.5);
+  };
+
   /************* GameSwarm ******************/
   const GameSwarmState = new Phaser.State();
 
@@ -330,7 +417,7 @@
       bounceTween.to({y: b.y + 5}, 600, Phaser.Easing.Bounce.Out, true, 0, -1, true);
     };
 
-    Game.time.events.repeat(Phaser.Timer.SECOND * 1, 3, spawnBook, this);
+    Game.time.events.repeat(Phaser.Timer.SECOND * 6, 3, spawnBook, this);
 
     BookPickupSound = Game.add.audio('coin');
     PowerupSound = Game.add.audio('powerup');
@@ -605,6 +692,10 @@
 
     healthBar.setPercent(0);
 
+    const onHelpBtnClick = () => {
+      Game.state.start('Help', true, false);
+    };
+
     GameEndText = Game.add.text(Game.world.centerX, Game.world.height * 0.45, `Game Over\n\n${convertScoreToText(score)}`, {
       font: `${TEXT_SCALE_FACTOR * 2}em "PressStart2P"`,
       fill: '#FFFFFF',
@@ -618,6 +709,8 @@
 
     RetryButton = Game.add.button(Game.world.centerX, Game.world.height * 0.7, 'retryButton', onRetryBtnClick, this);
     RetryButton.anchor.setTo(0.5);
+    HelpButton = Game.add.button(RetryButton.x, RetryButton.y + RetryButton.height, 'helpButton', onHelpBtnClick, this);
+    HelpButton.anchor.setTo(0.5);
   };
 
   GameOverState.shutdown = function() {
@@ -628,6 +721,7 @@
   const GameWinState = new Phaser.State();
 
   let PartyParrot;
+  let HelpButton;
 
   GameWinState.create = function() {
     ScoreSound = Game.add.audio('score');
@@ -670,6 +764,7 @@
   Game.state.add('Preloader', PreloaderGameState, false);
   Game.state.add('MainMenu', MainMenuGameState, false);
   Game.state.add('About', AboutGameState, false);
+  Game.state.add('Help', HelpGameState, false);
   Game.state.add('Intro', IntroGameState, false);
   Game.state.add('Interlude', InterludeGameState, false);
   Game.state.add('GameSwarm', GameSwarmState, false);
